@@ -7,12 +7,10 @@
 
 ## LED Controller API
 - /configuration endpoint
-  - GET
   - POST
 - /leds endpoint
   - GET (optional)
   - POST
-- Database / datastore for config
 
 ## Android App
 - App Skeleton - Main Screen
@@ -37,10 +35,12 @@
 - Source screws, dampening grommets, air filters
 
 # In Progress
-- LED Controller API - Define API in SwaggerHub
+- LED Controller API - /configuration endpoint, GET
+- LED Controller API - Database / datastore for config
 
 # Blocked
 - Hardware - Build NAS - possible faulty RAM
 
 # Finished
 - Hardware - Select & order hardware
+- LED Controller API - Define API in SwaggerHub
