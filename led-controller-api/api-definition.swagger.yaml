@@ -1,0 +1,154 @@
+swagger: '2.0'
+info:
+  description: An LED Controller API
+  version: 0.0.1
+  title: An LED Controller API
+  contact:
+    email: paul.mandal@gmail.com
+
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+# tags are used for organizing operations
+schemes:
+- http
+paths:
+  /configuration:
+    get:
+      summary: retrieves current configuration
+      operationId: getConfiguration
+      description: |
+        Retrieves the current configuration
+      produces:
+      - application/json
+      responses:
+        200:
+          description: current configuration
+          schema:
+            $ref: '#/definitions/Configuration'
+        400:
+          description: bad input parameter
+    put:
+      summary: updates the configuration
+      operationId: updateConfiguration
+      description: Updates the configuration
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: configuration
+        description: The new configuration
+        schema:
+          $ref: '#/definitions/Configuration'
+      responses:
+        201:
+          description: configuration updated
+        400:
+          description: invalid input, object invalid
+  /leds:
+    put:
+      summary: updates an LEDs color and brightness
+      operationId: updateLed
+      description: Updates and LEDs color and brightness
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: ledUpdate
+        description: Color and brightness update for an LED
+        schema:
+          $ref: '#/definitions/LedUpdate'
+      responses:
+        201:
+          description: LED updated
+        400:
+          description: invalid input, LED out of range, values out of range
+definitions:
+  Configuration:
+    type: object
+    required:
+    - topLedCount
+    - rightLedCount
+    - bottomLedCount
+    - leftLedCount
+    - startupBrightness
+    - startupRed
+    - startupGreen
+    - startupBlue
+    - softwareMaxColor
+    - softwareMaxBrightness
+    - hardwareMaxColor
+    - hardwareMaxBrightness
+    properties:
+      topLedCount:
+        type: integer
+        example: 60
+      rightLedCount:
+        type: integer
+        example: 30
+      bottomLedCount:
+        type: integer
+        example: 60
+      leftLedCount:
+        type: integer
+        example: 30
+      startupBrightness:
+        type: integer
+        example: 30
+      startupRed:
+        type: integer
+        example: 128
+      startupGreen:
+        type: integer
+        example: 128
+      startupBlue:
+        type: integer
+        example: 128
+      softwareMaxColor:
+        type: integer
+        description: color scale supplied by the Android app
+        example: 256
+      softwareMaxBrightness:
+        type: integer
+        description: brightness scale supplied by the Android app
+        example: 100
+      hardwareMaxColor:
+        type: integer
+        description: maximum R/G/B value supported by hardware - e.g. our LED strip supports 8-bits per color channel = 256 colors per channel
+        example: 256
+      hardwareMaxBrightness:
+        type: integer
+        description: maximum brightness supported by hardware - e.g. our LED strip supports 5-bits of brightness = 32 brightness levels
+        example: 32
+  LedUpdate:
+    type: object
+    required:
+    - ledNumber
+    - red
+    - green
+    - blue
+    - brightness
+    properties:
+      ledNumber:
+        type: integer
+        format: 0-255
+      red:
+        type: integer
+        example: 128
+      green:
+        type: integer
+        example: 128
+      blue:
+        type: integer
+        example: 128
+      brightness:
+        type: integer
+        example: 70
+host: somelinuxBox
+basePath: /led-control/
+
