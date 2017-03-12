@@ -38,6 +38,7 @@ def update_led():
         abort(400)
     if not any(x in request.json for x in LED_UPDATE_FIELDS):
         abort(400)
+    json = request.json
     ucontroller.update_led(json['ledNumber'], json['red'], json['green'], json['blue'], json['brightness'])
     return "LED updated", 201
 
