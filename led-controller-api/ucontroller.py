@@ -10,18 +10,21 @@ from threading import Lock
 serialPort = open(USB_SERIAL, 'w')
 lock = Lock()
 
-def setConfig(config, startup=False):
-    ledCount = config['topLedCount'] + config['rightLedCount'] + config['bottomLedCount'] + config['leftLedCount']
-    configCommand = "C:%d" % ledCount
-    send(configCommand)
+
+def set_config(config, startup=False):
+    led_count = config['topLedCount'] + config['rightLedCount'] + config['bottomLedCount'] + config['leftLedCount']
+    config_command = "C:%d" % led_count
+    send(config_command)
     if startup:
-        updateLed(config['startupRed'], config['startupGreen'], config['startupBlue'], config['startupBrightness'])
+        update_led(config['startupRed'], config['startupGreen'], config['startupBlue'], config['startupBrightness'])
     return
 
-def updateLed(ledNumber, red, green, blue, brightness):
-    updateCommand = "U:%d,%d,%d,%d,%d" % (ledNumber, red, green, blue, brightness)
-    send(updateCommand)
+
+def update_led(led_number, red, green, blue, brightness):
+    update_command = "U:%d,%d,%d,%d,%d" % (led_number, red, green, blue, brightness)
+    send(update_command)
     return
+
 
 def send(command):
     with lock:

@@ -9,14 +9,16 @@ import sqlite3
 
 db = sqlite3.connect(DATABASE_FILE, check_same_thread=False)
 
+
 def dict_factory(cursor, row):
     d = {}
     for idx, col in enumerate(cursor.description):
         d[col[0]] = row[idx]
     return d
 
+
 # Check if the configuration database exists, if it does not create it
-def maybeInitDatabase():
+def maybe_init_database():
     cursor = db.cursor()
     cursor.execute('SELECT name FROM sqlite_master WHERE type="table" AND name=?;', [CONFIG_TABLE_NAME])
     data = cursor.fetchone()
@@ -53,14 +55,16 @@ def maybeInitDatabase():
         db.commit()
     return
 
-def getConfig():
+
+def get_config():
     db.row_factory = dict_factory
     cursor = db.cursor()
     cursor.execute("SELECT * FROM %s" % CONFIG_TABLE_NAME)
     data = cursor.fetchone()
     return data
 
-def getConfigColumns():
+
+def get_config_columns():
     db.row_factory = None
     cursor = db.cursor()
     cursor.execute("SELECT * FROM %s" % CONFIG_TABLE_NAME)
@@ -71,7 +75,7 @@ def getConfigColumns():
     return columns
 
 
-def storeConfiguration(json):
+def store_config(json):
     cursor = db.cursor()
     cursor.execute("""
     UPDATE %s SET

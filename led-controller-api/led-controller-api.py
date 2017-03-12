@@ -11,29 +11,34 @@ import configdb
 import ucontroller
 
 app = Flask(__name__)
-configdb.maybeInitDatabase()
+configdb.maybe_init_database()
+ucontroller.set_config(configdb.get_config(), startup=True)
+
 
 @app.route('/configuration', methods=['GET'])
-def getConfiguration():
-    data = configdb.getConfig()
+def get_configuration():
+    data = configdb.get_config()
     return json.dumps(data)
 
+
 @app.route('/configuration', methods=['PUT'])
-def storeConfiguration():
+def store_configuration():
     if not request.json:
         abort(400)
-    if not any(x in request.json for x in configdb.getConfigColumns()):
+    if not any(x in request.json for x in configdb.get_config_columns()):
         abort(400)
-    configdb.storeConfiguration(request.json)
+    configdb.store_config(request.json)
+    ucontroller.set_config(request.json)
     return "configuration updated", 201
 
+
 @app.route('/leds', methods=['PUT'])
-def updateLed():
+def update_led():
     if not request.json:
         abort(400)
     if not any(x in request.json for x in LED_UPDATE_FIELDS):
         abort(400)
-    ucontroller.updateLed(request.json)
+    ucontroller.updateLed(json['ledNumber'], json['red'], json['green'], json['blue'], json['brightness'])
     return "LED updated", 201
 
 if __name__ == '__main__':
