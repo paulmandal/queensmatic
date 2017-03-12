@@ -5,11 +5,6 @@
 - Read LED update commands from serial port (format: LED#,R,G,B - uint8_t)
 - Update LED strip
 
-## LED Controller API
-- /leds endpoint
-  - GET (optional)
-  - POST
-
 ## Android App
 - App Skeleton - Main Screen
 - Configuration fetching & parsing
@@ -33,7 +28,7 @@
 - Source screws, dampening grommets, air filters
 
 # In Progress
-- LED Controller API - /configuration endpoint, POST
+- LED uController Software - - Basic skeleton
 
 # Blocked
 - Hardware - Build NAS - possible faulty RAM
@@ -43,3 +38,10 @@
 - LED Controller API - Define API in SwaggerHub
 - LED Controller API - /configuration endpoint, GET
 - LED Controller API - Database / datastore for config
+- LED Controller API - /configuration endpoint, PUT
+- LED Controller API - /leds endpoint - PUT
+- LED Controller API - Init uController with config
+
+# Icebox
+
+- LED Controller API - /leds endpoint - GET
