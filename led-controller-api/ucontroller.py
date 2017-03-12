@@ -16,7 +16,9 @@ def set_config(config, startup=False):
     config_command = "C:%d" % led_count
     send(config_command)
     if startup:
-        update_led(config['startupRed'], config['startupGreen'], config['startupBlue'], config['startupBrightness'])
+        for i in range(0, led_count):
+            update_led(i, config['startupRed'], config['startupGreen'], config['startupBlue'],
+                       config['startupBrightness'])
     return
 
 
