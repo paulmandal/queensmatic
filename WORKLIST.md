@@ -6,8 +6,6 @@
 - Update LED strip
 
 ## LED Controller API
-- /configuration endpoint
-  - POST
 - /leds endpoint
   - GET (optional)
   - POST
@@ -35,8 +33,7 @@
 - Source screws, dampening grommets, air filters
 
 # In Progress
-- LED Controller API - /configuration endpoint, GET
-- LED Controller API - Database / datastore for config
+- LED Controller API - /configuration endpoint, POST
 
 # Blocked
 - Hardware - Build NAS - possible faulty RAM
@@ -44,3 +41,5 @@
 # Finished
 - Hardware - Select & order hardware
 - LED Controller API - Define API in SwaggerHub
+- LED Controller API - /configuration endpoint, GET
+- LED Controller API - Database / datastore for config
