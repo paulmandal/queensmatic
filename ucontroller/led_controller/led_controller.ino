@@ -8,6 +8,9 @@
 // Default # of LEDs this controller is driving
 const int DEFAULT_LED_COUNT = 180;
 
+// LED update value count (index, red, green, blue, brightness)
+const int LED_UPDATE_VALUE_COUNT = 5;
+
 // Message buffer size
 const int MSG_BUFFER_SIZE = 64;
 
@@ -32,13 +35,18 @@ int bufferPos;
 // Last read byte from serial
 char readByte;
 
+/**
+ * Init code
+ */
 void setup() {
   Serial.begin(115200);
-  Serial.println("This is a butts test");
   allocateMemory();  
   updateLeds();
 }
 
+/**
+ * Main loop
+ */
 void loop() {
   while(Serial.available() > 0) {
     readByte = Serial.read();
@@ -59,11 +67,17 @@ void loop() {
   }
 }
 
+/**
+ * Allocate memory for LED state and message buffer
+ */
 void allocateMemory() {
   leds = (LED*)calloc(currentLedCount, sizeof(LED));
   msgBuf = (char*)calloc(MSG_BUFFER_SIZE, sizeof(char));
 }
 
+/**
+ * Free up allocated memory
+ */
 void freeMemory() {
   free(leds);
   free(msgBuf);
@@ -72,10 +86,11 @@ void freeMemory() {
 /**
  * Process a command and update the uController state
  */
-boolean processCommand(char command[], int commandLength) {
+boolean processCommand(char *command, int commandLength) {
   if(command[0] == 'C') {
     // Configuration update
     char *seperator = strchr(command, ':');
+    // Extract LED count from string
     if(seperator != NULL) {
       seperator++;      
       int ledCount = atoi(seperator);
@@ -85,16 +100,82 @@ boolean processCommand(char command[], int commandLength) {
     }
   } else if(command[0] == 'U') {
     // LED update
-    // TODO: LED update
-    return true;
+    char *valuesStr = strchr(command, ':');
+    // Extract individual values from string
+    if(valuesStr != NULL) {
+      int values[LED_UPDATE_VALUE_COUNT];
+      int readValues = 0;
+      valuesStr++;
+      char *valueStr = strtok(valuesStr, ",");
+      while(valueStr != NULL && readValues < LED_UPDATE_VALUE_COUNT) {
+        int value = atoi(valueStr);
+        values[readValues] = value;
+        readValues++;
+        valueStr = strtok(NULL, ",");
+      }
+      if(readValues == LED_UPDATE_VALUE_COUNT) {
+        // Update LED if enough values were read
+        return updateLed(values[0], values[1], values[2], values[3], values[4]);
+      }
+    }
+  } else if(command[0] == 'S') {
+    // Output status - currently for debugging but could be adapted for bidirectional communication
+    outputLedState(currentLedCount);
   }
   return false;
 }
 
-void updateLed(int ledNumber, int red, int green, int blue, int brightness) {
-  // TODO: update LED
+/**
+ * Update an LED's state
+ */
+boolean updateLed(int ledNumber, int red, int green, int blue, int brightness) {
+  if(ledNumber >= currentLedCount) {
+    // LED out of bounds
+    return false;
+  }
+  LED *led = &leds[ledNumber];
+  boolean needsUpdate = led->red != red
+                          || led->green != green
+                          || led->blue != blue
+                          || led->brightness != brightness;
+  if(needsUpdate) {
+    led->red = red;
+    led->green = green;
+    led->blue = blue;
+    led->brightness = brightness;
+  }
+  return needsUpdate;
 }
 
+/**
+ * Output the current LED state to the serial port
+ * Limit with count, or pass currentLedCount for all LEDs
+ */
+void outputLedState(int count) {
+  Serial.println();
+  Serial.println();
+  Serial.println("LED State");
+  Serial.println("#,r,g,b,br");
+  for(int i = 0 ; i < currentLedCount && i < count ; i++) {
+    Serial.print("LED: ");
+    Serial.print(i);
+    Serial.print(", ");
+    Serial.print(leds[i].red);
+    Serial.print(", ");
+    Serial.print(leds[i].green);
+    Serial.print(", ");
+    Serial.print(leds[i].blue);
+    Serial.print(", ");
+    Serial.print(leds[i].brightness);
+    Serial.println();
+  }
+  Serial.println();
+  Serial.println();
+}
+
+/**
+ * Update the configuration state
+ */
 void updateConfig(int ledCount) {
   boolean reallocate = currentLedCount != ledCount;
   currentLedCount = ledCount;
@@ -104,6 +185,9 @@ void updateConfig(int ledCount) {
   }
 }
 
+/**
+ * Send commands to LED hardware to update lights
+ */
 void updateLeds() {
   // TODO: update LED strip
 }

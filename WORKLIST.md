@@ -1,9 +1,5 @@
 # To Do
 
-## LED uController Software
-- Read LED update commands from serial port (format: LED#,R,G,B - uint8_t)
-- Update LED strip
-
 ## Android App
 - App Skeleton - Main Screen
 - Configuration fetching & parsing
@@ -25,9 +21,12 @@
   - Wall mounting
   - Light-bleed blocking?
 - Source screws, dampening grommets, air filters
+- Design circuit in Eagle
+- Prototype circuit on breadboards
+- Solder final circuit
 
 # In Progress
-- LED uController Software - Read config from serial port
+- LED uController Software - Update LED Strip
 
 # Blocked
 - Hardware - Build NAS - possible faulty RAM
@@ -41,6 +40,8 @@
 - LED Controller API - /leds endpoint - PUT
 - LED Controller API - Init uController with config
 - LED uController Software - - Basic skeleton
+- LED uController Software - Read config from serial port
+- LED uController Software - Read LED update commands from serial port (format: LED#,R,G,B - uint8_t)
 
 # Icebox
 

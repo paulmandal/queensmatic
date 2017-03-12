@@ -5,5 +5,8 @@
 - Use Python classes for data received by the API
 - Move JSON->Native (and vice versa) mapping into API-level (led-controller-api.py)
 - Move RGB and Brightness remapping to uController code
+- Scoping in Arduino code - Arduino has some oddness going on there (don't want to define anything inside the loop())
+- Structs in Arduino for message handling
+- Break Arduino code into smaller files
 - Unit Tests
 - Integration Tests
