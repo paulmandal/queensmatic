@@ -2,5 +2,8 @@
 - Design assumes a rectangular LED strip arrangement - something more flexible would be cool, but overkill for now
 - Define initial DB in .sql file instead of Python file
 - Bidirectional communication with the uController
+- Use Python classes for data received by the API
+- Move JSON->Native (and vice versa) mapping into API-level (led-controller-api.py)
+- Move RGB and Brightness remapping to uController code
 - Unit Tests
 - Integration Tests

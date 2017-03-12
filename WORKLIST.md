@@ -1,7 +1,6 @@
 # To Do
 
 ## LED uController Software
-- Read config (current: total LEDs) from serial port
 - Read LED update commands from serial port (format: LED#,R,G,B - uint8_t)
 - Update LED strip
 
@@ -28,7 +27,7 @@
 - Source screws, dampening grommets, air filters
 
 # In Progress
-- LED uController Software - - Basic skeleton
+- LED uController Software - Read config from serial port
 
 # Blocked
 - Hardware - Build NAS - possible faulty RAM
@@ -41,6 +40,7 @@
 - LED Controller API - /configuration endpoint, PUT
 - LED Controller API - /leds endpoint - PUT
 - LED Controller API - Init uController with config
+- LED uController Software - - Basic skeleton
 
 # Icebox
 
