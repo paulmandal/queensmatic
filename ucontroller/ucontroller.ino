@@ -5,6 +5,8 @@
  *  - Updates attached LED strip
  */
 
+#include <SPI.h>
+
 // Default # of LEDs this controller is driving
 const int DEFAULT_LED_COUNT = 180;
 
@@ -17,12 +19,15 @@ const int MSG_BUFFER_SIZE = 64;
 // Current # of LEDs this controller is driving
 int currentLedCount = DEFAULT_LED_COUNT;
 
+// uController clock speed
+long DEVICE_CLOCK_SPEED = 16000000L;
+
 // An LED on our light strip
 struct LED {
-  int red        = 0;
-  int green      = 0;
-  int blue       = 0;
-  int brightness = 0;
+  unsigned int red        = 0;
+  unsigned int green      = 0;
+  unsigned int blue       = 0;
+  unsigned int brightness = 0;
 };
 
 // Current LED state
@@ -40,8 +45,9 @@ char readByte;
  */
 void setup() {
   Serial.begin(115200);
-  allocateMemory();  
-  updateLeds();
+  SPI.begin();  
+  allocateMemory();
+  //updateLeds();
 }
 
 /**
@@ -156,17 +162,19 @@ void outputLedState(int count) {
   Serial.println();
   Serial.println("LED State");
   Serial.println("#,r,g,b,br");
+  LED *led;
   for(int i = 0 ; i < currentLedCount && i < count ; i++) {
+    led = &leds[i];
     Serial.print("LED: ");
     Serial.print(i);
     Serial.print(", ");
-    Serial.print(leds[i].red);
+    Serial.print(led->red);
     Serial.print(", ");
-    Serial.print(leds[i].green);
+    Serial.print(led->green);
     Serial.print(", ");
-    Serial.print(leds[i].blue);
+    Serial.print(led->blue);
     Serial.print(", ");
-    Serial.print(leds[i].brightness);
+    Serial.print(led->brightness);
     Serial.println();
   }
   Serial.println();
@@ -189,6 +197,31 @@ void updateConfig(int ledCount) {
  * Send commands to LED hardware to update lights
  */
 void updateLeds() {
-  // TODO: update LED strip
+  // For APA102C
+  int endLength = round(((float)(currentLedCount - 1) / 16.0) + 0.5F);
+  endLength = max(endLength, 4);
+  int i;
+  byte headerByte = B11100000;  
+  LED *led;
+  SPI.beginTransaction(SPISettings(8000000, MSBFIRST, SPI_MODE1));
+  // Start by sending 32 zero bits
+  for(i = 0 ; i < 4 ; i++) {
+    SPI.transfer(0x00);    
+  }
+  // Send each LED state, header is 1110 0000 & 5-bit brightness, then b/g/r color channels
+  for(i = 0 ; i < currentLedCount ; i++) {
+    led = &leds[i];
+    headerByte = headerByte & led->brightness;
+    SPI.transfer(headerByte);
+    SPI.transfer(led->blue);
+    SPI.transfer(led->green);
+    SPI.transfer(led->red);
+  }
+  for(i = 0 ; i < endLength ; i++) {
+    SPI.transfer(0x00);
+  }
+  SPI.endTransaction();  
+  Serial.print("Updated LEDs, endlength: ");
+  Serial.println(endLength);
 }
 
