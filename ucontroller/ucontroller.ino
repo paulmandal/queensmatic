@@ -127,10 +127,6 @@ boolean processCommand(char *command, int commandLength) {
   } else if(command[0] == 'S') {
     // Output status - currently for debugging but could be adapted for bidirectional communication
     outputLedState(currentLedCount);
-  } else if(command[0] == 'B') {
-    printByte(0xCD, true);
-  } else if(command[0] == 'T') {
-    simulateTransfer();
   }
   return false;
 }
@@ -197,6 +193,7 @@ void updateConfig(int ledCount) {
     freeMemory();
     allocateMemory();
   }
+  updateLeds();
 }
 
 /**
@@ -227,44 +224,5 @@ void updateLeds() {
     SPI.transfer(0xFF);
   }
   SPI.endTransaction();  
-}
-
-void simulateTransfer() {
-  // For APA102C
-  int endLength = round(((float)(currentLedCount - 1) / 16.0) + 0.5F);
-  endLength = max(endLength, 4);
-  int i;
-  byte headerByte;
-  LED *led;
-  // Start by sending 32 zero bits
-  for(i = 0 ; i < 4 ; i++) {
-    printByte(0x00, false);
-  }
-  Serial.println();
-  // Send each LED state, header is 1110 0000 & 5-bit brightness, then b/g/r color channels
-  for(i = 0 ; i < currentLedCount ; i++) {
-    led = &leds[i];
-    headerByte = B11100000 | led->brightness;
-    printByte(headerByte, false);
-    printByte(led->blue, false);
-    printByte(led->green, false);
-    printByte(led->red, true);
-  }
-  for(i = 0 ; i < endLength ; i++) {
-    printByte(0xFF, false);
-  }
-}
-
-void printByte(byte b, boolean newline) {
-  for(int i = 7 ; i > -1 ; i--) {
-    Serial.print(((b >> i) & B00000001) && 1);
-    if(i == 4) {
-      Serial.print(" ");
-    }
-  }
-  Serial.print("   ");
-  if(newline) {
-    Serial.println();
-  }
 }
 
