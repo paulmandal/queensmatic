@@ -1,4 +1,5 @@
 # To Do
+- General - First End-to-End Test
 
 ## Android App
 - Configuration fetching & parsing
