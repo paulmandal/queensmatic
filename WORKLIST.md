@@ -1,7 +1,6 @@
 # To Do
 
 ## Android App
-- App Skeleton - Main Screen
 - Configuration fetching & parsing
 - Configuration Screen (host, top/right/bottom/left LED counts)
 - LED Updating Screen
@@ -26,7 +25,7 @@
 - Solder final circuit
 
 # In Progress
-- LED uController Software - Update LED Strip
+- Android App - App Skeleton - Main Screen
 
 # Blocked
 - Hardware - Build NAS - possible faulty RAM
@@ -42,6 +41,7 @@
 - LED uController Software - - Basic skeleton
 - LED uController Software - Read config from serial port
 - LED uController Software - Read LED update commands from serial port (format: LED#,R,G,B - uint8_t)
+- LED uController Software - Update LED Strip
 
 # Icebox
 

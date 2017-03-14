@@ -80,10 +80,6 @@ definitions:
     - startupRed
     - startupGreen
     - startupBlue
-    - softwareMaxColor
-    - softwareMaxBrightness
-    - hardwareMaxColor
-    - hardwareMaxBrightness
     properties:
       topLedCount:
         type: integer
@@ -109,22 +105,6 @@ definitions:
       startupBlue:
         type: integer
         example: 128
-      softwareMaxColor:
-        type: integer
-        description: color scale supplied by the Android app
-        example: 256
-      softwareMaxBrightness:
-        type: integer
-        description: brightness scale supplied by the Android app
-        example: 100
-      hardwareMaxColor:
-        type: integer
-        description: maximum R/G/B value supported by hardware - e.g. our LED strip supports 8-bits per color channel = 256 colors per channel
-        example: 256
-      hardwareMaxBrightness:
-        type: integer
-        description: maximum brightness supported by hardware - e.g. our LED strip supports 5-bits of brightness = 32 brightness levels
-        example: 32
   LedUpdate:
     type: object
     required:
@@ -136,19 +116,22 @@ definitions:
     properties:
       ledNumber:
         type: integer
-        format: 0-255
+        format: 0-LED_COUNT
       red:
         type: integer
+        format: 0-255
         example: 128
       green:
         type: integer
+        format: 0-255
         example: 128
       blue:
         type: integer
+        format: 0-255
         example: 128
       brightness:
         type: integer
-        example: 70
+        format: 0-31
+        example: 25
 host: somelinuxBox
 basePath: /led-control/
-

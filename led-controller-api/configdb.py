@@ -32,11 +32,7 @@ def maybe_init_database():
                       startupBrightness INT,
                       startupRed INT,
                       startupGreen INT,
-                      startupBlue INT,
-                      softwareMaxColor INT,
-                      softwareMaxBrightness INT,
-                      hardwareMaxColor INT,
-                      hardwareMaxBrightness INT);
+                      startupBlue INT);
                     INSERT INTO %s VALUES (
                         60,
                         30,
@@ -45,11 +41,7 @@ def maybe_init_database():
                         100,
                         255,
                         255,
-                        255,
-                        256,
-                        100,
-                        256,
-                        32
+                        255
                     );
                 """ % (CONFIG_TABLE_NAME, CONFIG_TABLE_NAME))
         db.commit()
@@ -86,11 +78,7 @@ def store_config(json):
         startupBrightness = ?,
         startupRed = ?,
         startupGreen = ?,
-        startupBlue = ?,
-        softwareMaxColor = ?,
-        softwareMaxBrightness = ?,
-        hardwareMaxColor = ?,
-        hardwareMaxBrightness = ?
+        startupBlue = ?
     """ % CONFIG_TABLE_NAME, [
                                 json['topLedCount'],
                                 json['rightLedCount'],
@@ -99,11 +87,7 @@ def store_config(json):
                                 json['startupBrightness'],
                                 json['startupRed'],
                                 json['startupGreen'],
-                                json['startupBlue'],
-                                json['softwareMaxColor'],
-                                json['softwareMaxBrightness'],
-                                json['hardwareMaxColor'],
-                                json['hardwareMaxBrightness']
+                                json['startupBlue']
                               ])
     db.commit()
     return

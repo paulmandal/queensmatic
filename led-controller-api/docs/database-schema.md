@@ -11,7 +11,3 @@
 | startupRed            | integer   |
 | startupGreen          | integer   |
 | startupBlue           | integer   |
-| softwareMaxColor      | integer   |
-| softwareMaxBrightness | integer   |
-| hardwareMaxColor      | integer   |
-| hardwareMaxBrightness | integer   |
