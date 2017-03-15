@@ -84,23 +84,10 @@ public class ApiConnection {
                     FetchConfigurationListener mListener = listener;
                     @Override
                     public void onResponse(JSONObject response) {
-                        try {
-                            int topLedCount = response.getInt("topLedCount");
-                            int rightLedCount = response.getInt("rightLedCount");
-                            int bottomLedCount = response.getInt("bottomLedCount");
-                            int leftLedCount = response.getInt("leftLedCount");
-                            int startupBrightness = response.getInt("startupBrightness");
-                            int startupRed = response.getInt("startupRed");
-                            int startupGreen = response.getInt("startupGreen");
-                            int startupBlue = response.getInt("startupBlue");
-
-                            Configuration configuration = new Configuration(topLedCount,
-                                    rightLedCount, bottomLedCount, leftLedCount, startupBrightness,
-                                    startupRed, startupGreen, startupBlue);
-
+                        Configuration configuration = ApiTranslator.configurationFromJson(response);
+                        if(configuration != null) {
                             mListener.onConfigurationFetched(configuration);
-                        } catch(JSONException e) {
-                            e.printStackTrace();
+                        } else {
                             mListener.onConfigurationFetchError();
                         }
                     }
@@ -121,39 +108,25 @@ public class ApiConnection {
      * @param configuration
      */
     public void sendConfiguration(final StoreConfigurationListener listener, Configuration configuration) {
-        try {
-            JSONObject json = new JSONObject();
-
-            // Native->JSON
-            json.put("topLedCount", configuration.topLedCount);
-            json.put("rightLedCount", configuration.rightLedCount);
-            json.put("bottomLedCount", configuration.bottomLedCount);
-            json.put("leftLedCount", configuration.leftLedCount);
-            json.put("startupBrightness", configuration.startupBrightness);
-            json.put("startupRed", configuration.startupRed);
-            json.put("startupGreen", configuration.startupGreen);
-            json.put("startupBlue", configuration.startupBlue);
-
+        JSONObject json = ApiTranslator.jsonObjectFromConfiguration(configuration);
+        if(json != null) {
             JsonObjectRequest request = new JsonObjectRequest
                     (Request.Method.PUT, mHostname + CONFIGURATION_ENDPOINT, json, new Response.Listener<JSONObject>() {
                         StoreConfigurationListener mListener = listener;
                         @Override
                         public void onResponse(JSONObject response) {
-                            Log.d("DEBUG", "valid response: " + response);
                             mListener.onConfigurationStored();
                         }
                     }, new Response.ErrorListener() {
                         StoreConfigurationListener mListener = listener;
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Log.d("DEBUG", "error response: " + error);
                             error.printStackTrace();
                             mListener.onConfigurationStoreError();
                         }
                     });
             addRequest(request);
-        } catch(JSONException e) {
-            e.printStackTrace();
+        } else {
             listener.onConfigurationStoreError();
         }
     }

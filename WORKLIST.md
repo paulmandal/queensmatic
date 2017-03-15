@@ -1,4 +1,5 @@
 # To Do
+- Update SwaggerHub definition with response object
 
 ## Android App
 - LED Updating Screen
