@@ -8,6 +8,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.paulmandal.queensmaticledcontroller.data.Configuration;
+import com.paulmandal.queensmaticledcontroller.data.Led;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -72,4 +73,29 @@ public class ApiTranslator {
         }
         return null;
     }
+
+    /**
+     * Creates a JSONObject representation of an LED state
+     * @param led The LED to translate to JSON
+     * @return JSONObject representation of the supplied LED, or null if there was an error
+     */
+    @Nullable
+    public static JSONObject jsonObjectFromLed(Led led) {
+        try {
+            JSONObject json = new JSONObject();
+
+            // Native->JSON
+            json.put("ledNumber", led.ledNumber);
+            json.put("red", led.red);
+            json.put("green", led.green);
+            json.put("blue", led.blue);
+            json.put("brightness", led.brightness);
+
+            return json;
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

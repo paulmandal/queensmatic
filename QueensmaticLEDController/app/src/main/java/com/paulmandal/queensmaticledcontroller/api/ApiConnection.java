@@ -15,6 +15,7 @@ import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.paulmandal.queensmaticledcontroller.data.Configuration;
+import com.paulmandal.queensmaticledcontroller.data.Led;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -128,6 +129,29 @@ public class ApiConnection {
             addRequest(request);
         } else {
             listener.onConfigurationStoreError();
+        }
+    }
+
+    /**
+     * Sends an LED Update to the API - these are sent blind (no callback) because the user
+     * should be able to visually confirm that the updates are happening, error reporting/handling
+     * of some kind would be a nice addition, though.
+     * @param led The LED to update
+     */
+    public void sendLedUpdate(Led led) {
+        JSONObject json = ApiTranslator.jsonObjectFromLed(led);
+        if(json != null) {
+            JsonObjectRequest request = new JsonObjectRequest
+                    (Request.Method.PUT, mHostname + LED_UPDATE_ENDPOINT, json, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) { /* Do nothing */ }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            error.printStackTrace();
+                        }
+                    });
+            addRequest(request);
         }
     }
 
