@@ -6,10 +6,10 @@
 
 from constants import *
 from threading import Lock
+import serial
 
-serialPort = open(USB_SERIAL, 'w')
+serialPort = serial.Serial(USB_SERIAL, 115200)
 lock = Lock()
-
 
 def set_config(config, startup=False):
     led_count = config['topLedCount'] + config['rightLedCount'] + config['bottomLedCount'] + config['leftLedCount']
@@ -30,5 +30,6 @@ def update_led(led_number, red, green, blue, brightness):
 
 def send(command):
     with lock:
-        serialPort.write(command)
+        serialPort.write(command.encode())
+        serialPort.write(b'\n')
     return
