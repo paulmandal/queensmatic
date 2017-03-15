@@ -58,5 +58,16 @@ public class Configuration {
         this.startupBlue = startupBlue;
     }
 
+    public boolean equals(Configuration other) {
+        return super.equals(other) || topLedCount == other.topLedCount
+                && rightLedCount == other.rightLedCount
+                && bottomLedCount == other. bottomLedCount
+                && leftLedCount == other.leftLedCount
+                && startupBrightness == other.startupBrightness
+                && startupRed == other.startupRed
+                && startupGreen == other.startupGreen
+                && startupBlue == other.startupBlue;
+    }
+
 }
 

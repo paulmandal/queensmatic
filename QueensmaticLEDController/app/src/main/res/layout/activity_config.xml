@@ -9,8 +9,9 @@
         android:layout_height="wrap_content"
         android:ems="10"
         style="@style/edit_text_default"
-        android:inputType="text"
+        android:inputType="textUri"
         android:hint="@string/hostname"
+        android:text="http://"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 

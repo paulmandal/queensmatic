@@ -3,8 +3,10 @@ package com.paulmandal.queensmaticledcontroller;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -74,7 +76,7 @@ public class ConfigActivity extends AppCompatActivity {
         mSaveButton.setOnClickListener(mSaveButtonListener);
 
         mAppConfiguration = new AppConfiguration(this);
-        mApiConnection = new ApiConnection();
+        mApiConnection = ApiConnection.apiConnectionFactory(this);
     }
 
     @Override
@@ -104,17 +106,27 @@ public class ConfigActivity extends AppCompatActivity {
     private View.OnFocusChangeListener mHostnameFocusListener = new View.OnFocusChangeListener() {
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
-            if(hasFocus) {
+            if(!hasFocus) {
                 String hostname = mHostname.getText().toString();
-                if(!hostname.equals(mAppConfiguration.getHostname())) {
-                    mConfiguration = mApiConnection.fetchConfiguration(hostname);
-                    if(mConfiguration != null) {
-                        updateEditTexts();
-                    } else {
-                        hostnameError();
-                    }
+                boolean hostnameChanged = !hostname.equals(mAppConfiguration.getHostname());
+                if(!hostname.equals("http://") && hostnameChanged) {
+                    mAppConfiguration.setHostname(hostname);
+                    mApiConnection.fetchConfiguration(mFetchConfigurationListener, hostname);
                 }
             }
+        }
+    };
+
+    private ApiConnection.FetchConfigurationListener mFetchConfigurationListener = new ApiConnection.FetchConfigurationListener() {
+        @Override
+        public void onConfigurationFetched(@NonNull Configuration configuration) {
+            mConfiguration = configuration;
+            updateEditTexts();
+        }
+
+        @Override
+        public void onConfigurationFetchError() {
+            hostnameError();
         }
     };
 
@@ -137,6 +149,16 @@ public class ConfigActivity extends AppCompatActivity {
             Configuration configuration = new Configuration(topLedCount, rightLedCount,
                     bottomLedCount, leftLedCount, startupBrightness, startupRed,
                     startupGreen, startupBlue);
+
+            if(!mConfiguration.equals(configuration)) {
+                Log.d("DEBUG", "config is not equal, sending");
+                mApiConnection.sendConfiguration(configuration);
+            } else {
+                Log.d("DEBUG", "config is equal, opening other activity");
+                Intent i = new Intent(ConfigActivity.this, ConfigCheck.class);
+                startActivity(i);
+                finish();
+            }
         }
     };
 
@@ -144,14 +166,14 @@ public class ConfigActivity extends AppCompatActivity {
      * Update the EditTexts on this screen with configuration from the API
      */
     private void updateEditTexts() {
-        mTopLedCount.setText(mConfiguration.topLedCount);
-        mRightLedCount.setText(mConfiguration.rightLedCount);
-        mBottomLedCount.setText(mConfiguration.bottomLedCount);
-        mLeftLedCount.setText(mConfiguration.leftLedCount);
-        mStartupBrightness.setText(mConfiguration.startupBrightness);
-        mStartupRed.setText(mConfiguration.startupRed);
-        mStartupGreen.setText(mConfiguration.startupGreen);
-        mStartupBlue.setText(mConfiguration.startupBlue);
+        mTopLedCount.setText(String.valueOf(mConfiguration.topLedCount));
+        mRightLedCount.setText(String.valueOf(mConfiguration.rightLedCount));
+        mBottomLedCount.setText(String.valueOf(mConfiguration.bottomLedCount));
+        mLeftLedCount.setText(String.valueOf(mConfiguration.leftLedCount));
+        mStartupBrightness.setText(String.valueOf(mConfiguration.startupBrightness));
+        mStartupRed.setText(String.valueOf(mConfiguration.startupRed));
+        mStartupGreen.setText(String.valueOf(mConfiguration.startupGreen));
+        mStartupBlue.setText(String.valueOf(mConfiguration.startupBlue));
     }
 
     /**
