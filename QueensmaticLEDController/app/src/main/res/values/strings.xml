@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">Queensmatic LED Controller</string>
+
+    <!-- Config Activity -->
+    <string name="hostname">Hostname</string>
+    <string name="top_led_count">Top LED Count</string>
+    <string name="right_led_count">Right LED Count</string>
+    <string name="bottom_led_count">Bottom LED Count</string>
+    <string name="left_led_count">Left LED Count</string>
+    <string name="startup_brightness">Startup Brightness</string>
+    <string name="startup_red">Startup Red</string>
+    <string name="startup_green">Startup Green</string>
+    <string name="startup_blue">Startup Blue</string>
+    <string name="button_save">Save</string>
+    <string name="error_dialog_title">Error connecting to host: %1$s</string>
+    <string name="error_dialog_message">Re-enter the hostname and try again.</string>
 </resources>
