@@ -5,7 +5,7 @@
 #
 
 from constants import *
-from flask import Flask, request, abort
+from flask import Flask, request, abort, jsonify
 import json
 import configdb
 import ucontroller
@@ -29,7 +29,7 @@ def store_configuration():
         abort(400)
     configdb.store_config(request.json)
     ucontroller.set_config(request.json)
-    return "configuration updated", 201
+    return jsonify(message="configuration updated"), 201
 
 
 @app.route('/leds', methods=['PUT'])
@@ -40,7 +40,7 @@ def update_led():
         abort(400)
     json = request.json
     ucontroller.update_led(json['ledNumber'], json['red'], json['green'], json['blue'], json['brightness'])
-    return "LED updated", 201
+    return jsonify(message="LED updated"), 201
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=31337)

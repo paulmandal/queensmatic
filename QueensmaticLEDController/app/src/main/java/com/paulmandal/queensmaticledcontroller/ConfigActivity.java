@@ -22,6 +22,11 @@ import com.paulmandal.queensmaticledcontroller.data.Configuration;
 public class ConfigActivity extends AppCompatActivity {
 
     /**
+     * What to clear the hostname field to
+     */
+    private static final String EMPTY_HOSTNAME = "http://";
+
+    /**
      * API Connection
      */
     ApiConnection mApiConnection;
@@ -76,7 +81,7 @@ public class ConfigActivity extends AppCompatActivity {
         mSaveButton.setOnClickListener(mSaveButtonListener);
 
         mAppConfiguration = new AppConfiguration(this);
-        mApiConnection = ApiConnection.apiConnectionFactory(this);
+        mApiConnection = ApiConnection.apiConnectionFactory(this, mAppConfiguration.getHostname());
     }
 
     @Override
@@ -87,6 +92,7 @@ public class ConfigActivity extends AppCompatActivity {
         if(hostname != null) {
             mHostname.setText(hostname);
         } else {
+            mHostname.setText(EMPTY_HOSTNAME);
             mHostname.requestFocus();
         }
     }
@@ -109,9 +115,10 @@ public class ConfigActivity extends AppCompatActivity {
             if(!hasFocus) {
                 String hostname = mHostname.getText().toString();
                 boolean hostnameChanged = !hostname.equals(mAppConfiguration.getHostname());
-                if(!hostname.equals("http://") && hostnameChanged) {
+                if(!hostname.equals(EMPTY_HOSTNAME) && hostnameChanged) {
                     mAppConfiguration.setHostname(hostname);
-                    mApiConnection.fetchConfiguration(mFetchConfigurationListener, hostname);
+                    mApiConnection.setHostname(hostname);
+                    mApiConnection.fetchConfiguration(mFetchConfigurationListener);
                 }
             }
         }
@@ -127,6 +134,27 @@ public class ConfigActivity extends AppCompatActivity {
         @Override
         public void onConfigurationFetchError() {
             hostnameError();
+        }
+    };
+
+    private ApiConnection.StoreConfigurationListener mStoreConfigurationListener = new ApiConnection.StoreConfigurationListener() {
+        @Override
+        public void onConfigurationStored() {
+            configSaved();
+        }
+
+        @Override
+        public void onConfigurationStoreError() {
+            mAlertDialog = new AlertDialog.Builder(ConfigActivity.this)
+                    .setTitle(getString(R.string.error_saving_title))
+                    .setMessage(getString(R.string.error_saving_message))
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Do nothing
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
         }
     };
 
@@ -152,12 +180,10 @@ public class ConfigActivity extends AppCompatActivity {
 
             if(!mConfiguration.equals(configuration)) {
                 Log.d("DEBUG", "config is not equal, sending");
-                mApiConnection.sendConfiguration(configuration);
+                mApiConnection.sendConfiguration(mStoreConfigurationListener, configuration);
             } else {
                 Log.d("DEBUG", "config is equal, opening other activity");
-                Intent i = new Intent(ConfigActivity.this, ConfigCheck.class);
-                startActivity(i);
-                finish();
+                configSaved();
             }
         }
     };
@@ -181,17 +207,23 @@ public class ConfigActivity extends AppCompatActivity {
      */
     private void hostnameError() {
         mAlertDialog = new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.error_dialog_title, mHostname.getText()))
-                .setMessage(getString(R.string.error_dialog_message))
+                .setTitle(getString(R.string.error_connecting_title, mHostname.getText()))
+                .setMessage(getString(R.string.error_connecting_message))
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        mHostname.setText("");
+                        mHostname.setText(EMPTY_HOSTNAME);
                         mHostname.requestFocus();
                     }
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
 
+    }
+
+    private void configSaved() {
+        Intent i = new Intent(ConfigActivity.this, ConfigCheck.class);
+        startActivity(i);
+        finish();
     }
 
 }

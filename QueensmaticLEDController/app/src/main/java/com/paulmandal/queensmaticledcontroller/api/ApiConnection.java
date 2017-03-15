@@ -2,6 +2,7 @@ package com.paulmandal.queensmaticledcontroller.api;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.android.volley.Cache;
 import com.android.volley.Network;
@@ -51,27 +52,36 @@ public class ApiConnection {
      */
     private final RequestQueue mRequestQueue;
 
-    public ApiConnection(RequestQueue requestQueue) {
+    /**
+     * Hostname for API requests
+     */
+    private String mHostname;
+
+    public ApiConnection(RequestQueue requestQueue, String hostname) {
         mRequestQueue = requestQueue;
+        mHostname = hostname;
         mRequestQueue.start();
     }
 
-    public static ApiConnection apiConnectionFactory(Context context) {
+    public static ApiConnection apiConnectionFactory(Context context, String hostname) {
         Cache cache = new DiskBasedCache(context.getCacheDir(), 1024);
         Network network = new BasicNetwork(new HurlStack());
-        return new ApiConnection(new RequestQueue(cache, network));
+        return new ApiConnection(new RequestQueue(cache, network), hostname);
+    }
+
+    public void setHostname(String hostname) {
+        mHostname = hostname;
     }
 
     /**
      * Fetches the configuration from the API
      *
-     * @param callback Callback after async fetch
-     * @param hostname Hostname to fetch data from
+     * @param listener Callback after async fetch
      */
-    public void fetchConfiguration(final FetchConfigurationListener callback, String hostname) {
+    public void fetchConfiguration(final FetchConfigurationListener listener) {
         JsonObjectRequest request = new JsonObjectRequest
-                (Request.Method.GET, hostname + CONFIGURATION_ENDPOINT, null, new Response.Listener<JSONObject>() {
-                    FetchConfigurationListener mCallback = callback;
+                (Request.Method.GET, mHostname + CONFIGURATION_ENDPOINT, null, new Response.Listener<JSONObject>() {
+                    FetchConfigurationListener mListener = listener;
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
@@ -88,24 +98,64 @@ public class ApiConnection {
                                     rightLedCount, bottomLedCount, leftLedCount, startupBrightness,
                                     startupRed, startupGreen, startupBlue);
 
-                            mCallback.onConfigurationFetched(configuration);
+                            mListener.onConfigurationFetched(configuration);
                         } catch(JSONException e) {
                             e.printStackTrace();
-                            mCallback.onConfigurationFetchError();
+                            mListener.onConfigurationFetchError();
                         }
                     }
                 }, new Response.ErrorListener() {
-                    FetchConfigurationListener mCallback = callback;
+                    FetchConfigurationListener mListener = listener;
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        mCallback.onConfigurationFetchError();
+                        mListener.onConfigurationFetchError();
                     }
                 });
         addRequest(request);
     }
 
-    public void sendConfiguration(Configuration configuration) {
-        // TODO: method
+    /**
+     * Stores a Configuration using the API
+     *
+     * @param listener  Callback for async store operation
+     * @param configuration
+     */
+    public void sendConfiguration(final StoreConfigurationListener listener, Configuration configuration) {
+        try {
+            JSONObject json = new JSONObject();
+
+            // Native->JSON
+            json.put("topLedCount", configuration.topLedCount);
+            json.put("rightLedCount", configuration.rightLedCount);
+            json.put("bottomLedCount", configuration.bottomLedCount);
+            json.put("leftLedCount", configuration.leftLedCount);
+            json.put("startupBrightness", configuration.startupBrightness);
+            json.put("startupRed", configuration.startupRed);
+            json.put("startupGreen", configuration.startupGreen);
+            json.put("startupBlue", configuration.startupBlue);
+
+            JsonObjectRequest request = new JsonObjectRequest
+                    (Request.Method.PUT, mHostname + CONFIGURATION_ENDPOINT, json, new Response.Listener<JSONObject>() {
+                        StoreConfigurationListener mListener = listener;
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.d("DEBUG", "valid response: " + response);
+                            mListener.onConfigurationStored();
+                        }
+                    }, new Response.ErrorListener() {
+                        StoreConfigurationListener mListener = listener;
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.d("DEBUG", "error response: " + error);
+                            error.printStackTrace();
+                            mListener.onConfigurationStoreError();
+                        }
+                    });
+            addRequest(request);
+        } catch(JSONException e) {
+            e.printStackTrace();
+            listener.onConfigurationStoreError();
+        }
     }
 
     /**
@@ -113,7 +163,7 @@ public class ApiConnection {
      *
      * @param request JSONObject Volley request
      */
-    private void addRequest(Request<JSONObject> request) {
+    private void addRequest(Request request) {
         request.setShouldCache(false);
         mRequestQueue.add(request);
     }
