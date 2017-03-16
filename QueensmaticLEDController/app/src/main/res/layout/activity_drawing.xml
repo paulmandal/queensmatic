@@ -1,11 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:style="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/button_test"
+    <LinearLayout
+        android:id="@+id/led_layout_top"
         android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal" />
+
+
+    <LinearLayout
+        android:id="@+id/led_layout_right"
+        android:layout_width="16dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/led_layout_top"
+        android:layout_above="@id/led_layout_bottom"
+        android:orientation="vertical" />
+
+    <LinearLayout
+        android:id="@+id/led_layout_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal" />
+
+
+    <LinearLayout
+        android:id="@+id/led_layout_left"
+        android:layout_width="16dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/led_layout_top"
+        android:layout_above="@id/led_layout_bottom"
+        android:orientation="vertical" />
+
+    <Switch
+        android:id="@+id/power_switch"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Test" />
-</LinearLayout>
+        android:text="@string/power_switch"
+        android:layout_below="@+id/led_layout_top"
+        android:layout_toEndOf="@+id/led_layout_left"
+        android:layout_marginStart="95dp"
+        android:layout_marginTop="58dp" />
+
+    <SeekBar
+        android:id="@+id/red_channel_seekbar"
+        android:layout_width="192dp"
+        android:layout_height="wrap_content"
+        android:max="255"
+        android:layout_below="@+id/power_switch"
+        android:layout_alignStart="@+id/power_switch"
+        android:layout_marginTop="59dp" />
+
+
+    <SeekBar
+        android:id="@+id/green_channel_seekbar"
+        android:layout_width="192dp"
+        android:layout_height="wrap_content"
+        android:max="255"
+        android:layout_below="@+id/red_channel_seekbar"
+        android:layout_alignStart="@+id/red_channel_seekbar"
+        android:layout_marginTop="16dp" />
+
+    <SeekBar
+        android:id="@+id/blue_channel_seekbar"
+        android:layout_width="192dp"
+        android:layout_height="wrap_content"
+        android:max="255"
+        android:layout_below="@+id/green_channel_seekbar"
+        android:layout_alignStart="@+id/green_channel_seekbar"
+        android:layout_marginTop="16dp" />
+
+    <SeekBar
+        android:id="@+id/brightness_seekbar"
+        android:layout_width="192dp"
+        android:layout_height="wrap_content"
+        android:max="31"
+        android:layout_below="@+id/blue_channel_seekbar"
+        android:layout_alignStart="@+id/blue_channel_seekbar"
+        android:layout_marginTop="16dp" />
+
+    <View
+        android:id="@+id/color_preview"
+        android:layout_width="128dp"
+        android:layout_height="64dp"
+        android:layout_alignTop="@id/red_channel_seekbar"
+        android:layout_toRightOf="@id/red_channel_seekbar"
+        android:layout_marginLeft="32dp"/>
+
+    <Button
+        android:id="@+id/button_setup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/power_switch"
+        android:layout_toRightOf="@+id/power_switch"
+        android:layout_marginLeft="32dp"
+        android:text="@string/button_setup" />
+
+</RelativeLayout>

@@ -179,10 +179,8 @@ public class ConfigActivity extends AppCompatActivity {
                     startupGreen, startupBlue);
 
             if(!mConfiguration.equals(configuration)) {
-                Log.d("DEBUG", "config is not equal, sending");
                 mApiConnection.sendConfiguration(mStoreConfigurationListener, configuration);
             } else {
-                Log.d("DEBUG", "config is equal, opening other activity");
                 configSaved();
             }
         }
@@ -217,7 +215,6 @@ public class ConfigActivity extends AppCompatActivity {
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
-
     }
 
     private void configSaved() {
