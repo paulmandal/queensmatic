@@ -1,14 +1,19 @@
 package com.paulmandal.queensmaticledcontroller;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.DragEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
@@ -22,6 +27,11 @@ import com.paulmandal.queensmaticledcontroller.data.Led;
  */
 
 public class DrawingActivity extends AppCompatActivity {
+
+    /**
+     * How many strips our LED sets are divided into
+     */
+    private static final int LED_STRIPS = 4;
 
     /**
      * TODO: desc
@@ -55,9 +65,19 @@ public class DrawingActivity extends AppCompatActivity {
     Led[] mLeds;
 
     /**
+     * Current LED count
+     */
+    private int mLedCount;
+
+    /**
      * Current color
      */
     private int[] mColor = new int[4];
+
+    /**
+     * Current color in a/r/g/b
+     */
+    private int mArgbColor;
 
     /**
      * The Views representing LEDs
@@ -72,7 +92,12 @@ public class DrawingActivity extends AppCompatActivity {
     /**
      * Layouts the LED views go into - top, right, bottom, left
      */
-    private LinearLayout[] mLedLayouts = new LinearLayout[4];
+    private LinearLayout[] mLedLayouts = new LinearLayout[LED_STRIPS];
+
+    /**
+     * SeekBars for red, green, blue, brightness
+     */
+    private SeekBar[] mSeekbars = new SeekBar[4];
 
     /**
      * Alert dialog if one is being displayed
@@ -110,10 +135,13 @@ public class DrawingActivity extends AppCompatActivity {
         });
 
         // SeekBars
-        ((SeekBar)findViewById(R.id.red_channel_seekbar)).setOnSeekBarChangeListener(mSeekBarChangeListener);
-        ((SeekBar)findViewById(R.id.blue_channel_seekbar)).setOnSeekBarChangeListener(mSeekBarChangeListener);
-        ((SeekBar)findViewById(R.id.green_channel_seekbar)).setOnSeekBarChangeListener(mSeekBarChangeListener);
-        ((SeekBar)findViewById(R.id.brightness_seekbar)).setOnSeekBarChangeListener(mSeekBarChangeListener);
+        mSeekbars[RED] = (SeekBar)findViewById(R.id.red_channel_seekbar);
+        mSeekbars[GREEN] = (SeekBar)findViewById(R.id.blue_channel_seekbar);
+        mSeekbars[BLUE] = (SeekBar)findViewById(R.id.green_channel_seekbar);
+        mSeekbars[BRIGHTNESS] = (SeekBar)findViewById(R.id.brightness_seekbar);
+        for(int i = 0 ; i < 4 ; i++) {
+            mSeekbars[i].setOnSeekBarChangeListener(mSeekBarChangeListener);
+        }
 
         // Power Switch
         findViewById(R.id.power_switch).setOnClickListener(new View.OnClickListener() {
@@ -122,6 +150,7 @@ public class DrawingActivity extends AppCompatActivity {
                 // TODO: power switch
             }
         });
+
     }
 
     @Override
@@ -160,8 +189,8 @@ public class DrawingActivity extends AppCompatActivity {
                     break;
             }
             // Update the Color Preview
-            int alpha = (int)(mColor[BRIGHTNESS] / 31.0 * 255.0); // Rescale brightness (5-bit) -> 8-bit alpha
-            mColorPreview.setBackgroundColor(Color.argb(alpha, mColor[RED], mColor[GREEN], mColor[BLUE]));
+            mArgbColor = Color.argb(scaleBrightness(mColor[BRIGHTNESS]), mColor[RED], mColor[GREEN], mColor[BLUE]);
+            mColorPreview.setBackgroundColor(mArgbColor);
         }
 
         @Override
@@ -171,14 +200,21 @@ public class DrawingActivity extends AppCompatActivity {
         public void onStopTrackingTouch(SeekBar seekBar) {}
     };
 
+    /**
+     * Rescale brightness (5-bit) -> 8-bit alpha
+     * @param brightness 5-bit brightness
+     * @return 8-bit alpha
+     */
+    private int scaleBrightness(int brightness) {
+        return (int)(brightness / 31.0 * 255.0);
+    }
+
     private ApiConnection.FetchConfigurationListener mFetchConfigurationListener = new ApiConnection.FetchConfigurationListener() {
         @Override
         public void onConfigurationFetched(@NonNull Configuration configuration) {
             mConfiguration = configuration;
-            // TODO: set up LED data structs
-            Log.d("DEBUG", "LEDS:" + configuration.topLedCount);
-//            drawLeds();
-            // TODO: set view listeners
+            updateSeekbars();
+            updateLedSetup();
         }
 
         @Override
@@ -192,6 +228,86 @@ public class DrawingActivity extends AppCompatActivity {
         }
     };
 
+    private void updateSeekbars() {
+        mSeekbars[RED].setProgress(mConfiguration.startupRed);
+        mSeekbars[GREEN].setProgress(mConfiguration.startupGreen);
+        mSeekbars[BLUE].setProgress(mConfiguration.startupBlue);
+        mSeekbars[BRIGHTNESS].setProgress(mConfiguration.startupBrightness);
+    }
+
+    private void updateLedSetup() {
+        Configuration configuration = mConfiguration;
+        mLedCount = configuration.topLedCount + configuration.rightLedCount + configuration.bottomLedCount + configuration.leftLedCount;
+        mLeds = new Led[mLedCount];
+        mLedViews = new View[mLedCount];
+        int alpha = scaleBrightness(configuration.startupBrightness);
+        int color = Color.argb(alpha, configuration.startupRed, configuration.startupGreen, configuration.startupBlue);
+        for(int i = 0 ; i < mLedCount ; i++) {
+            mLeds[i] = new Led(i, configuration.startupBrightness, configuration.startupRed, configuration.startupGreen, configuration.startupBlue);
+            mLedViews[i] = new View(DrawingActivity.this);
+            mLedViews[i].setBackgroundColor(color);
+            mLedViews[i].setOnTouchListener(mLedTouchListener);
+        }
+        // Clear any existing LED Views
+        for(int i = 0 ; i < LED_STRIPS ; i++) {
+            mLedLayouts[i].removeAllViews();
+        }
+
+        // Draw views for each strip - hardware dependent
+        // TODO: abstract this
+        int width = mLedLayouts[LAYOUT_TOP].getWidth() / Math.max(configuration.topLedCount, 1);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, ViewGroup.LayoutParams.MATCH_PARENT);
+        for(int i = 0 ; i < configuration.topLedCount ; i++) {
+            mLedViews[i].setLayoutParams(params);
+            mLedLayouts[LAYOUT_TOP].addView(mLedViews[i]);
+        }
+        int height = mLedLayouts[LAYOUT_RIGHT].getHeight() / Math.max(configuration.rightLedCount, 1);
+        params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height);
+        for(int i = configuration.topLedCount ; i < configuration.rightLedCount ; i++) {
+            mLedViews[i].setLayoutParams(params);
+            mLedLayouts[LAYOUT_RIGHT].addView(mLedViews[i]);
+        }
+        width = mLedLayouts[LAYOUT_BOTTOM].getWidth() / Math.max(configuration.bottomLedCount, 1);
+        params = new LinearLayout.LayoutParams(width, ViewGroup.LayoutParams.MATCH_PARENT);
+        for(int i = configuration.rightLedCount ; i < configuration.bottomLedCount ; i++) {
+            mLedViews[i].setLayoutParams(params);
+            mLedLayouts[LAYOUT_BOTTOM].addView(mLedViews[i]);
+        }
+        height = mLedLayouts[LAYOUT_LEFT].getHeight() / Math.max(configuration.leftLedCount, 1);
+        params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height);
+        for(int i = configuration.bottomLedCount ; i < configuration.leftLedCount ; i++) {
+            mLedViews[i].setLayoutParams(params);
+            mLedLayouts[LAYOUT_LEFT].addView(mLedViews[i]);
+        }
+    }
+
+
+    private View.OnTouchListener mLedTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch(event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    v.setBackgroundColor(mArgbColor);
+                    int i = indexOfLedByView(v);
+                    mLeds[i].red = mColor[RED];
+                    mLeds[i].green = mColor[GREEN];
+                    mLeds[i].blue = mColor[BLUE];
+                    mLeds[i].brightness = mColor[BRIGHTNESS];
+                    mApiConnection.sendLedUpdate(mLeds[i]);
+            }
+            return true;
+        }
+    };
+
+    int indexOfLedByView(View v) {
+        int i;
+        for(i = 0 ; i < mLedCount ; i++) {
+            if(mLedViews[i] == v) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
