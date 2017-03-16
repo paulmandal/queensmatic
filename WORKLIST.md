@@ -3,9 +3,7 @@
 
 ## Android App
 - LED Updating Screen
-  - LED display
   - Touch & intersection detection
-  - API integration
 
 ## Hardware
 - OS Setup
@@ -45,6 +43,8 @@
 - General - First End-to-End Test
 - LED Updating Screen - Color & brightness sliders
 - LED Updating Screen - Color Preview & other UI
+- LED Updating Screen - LED display
+- LED Updating Screen - API integration
 
 # Icebox
 
