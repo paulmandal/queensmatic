@@ -91,6 +91,8 @@ public class ConfigActivity extends AppCompatActivity {
         String hostname = mAppConfiguration.getHostname();
         if(hostname != null) {
             mHostname.setText(hostname);
+            mAppConfiguration.setHostname(hostname);
+            mApiConnection.fetchConfiguration(mFetchConfigurationListener);
         } else {
             mHostname.setText(EMPTY_HOSTNAME);
             mHostname.requestFocus();

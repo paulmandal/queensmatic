@@ -3,7 +3,8 @@
     xmlns:style="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/black">
 
     <LinearLayout
         android:id="@+id/led_layout_top"
@@ -18,8 +19,8 @@
         android:layout_width="16dp"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
-        android:layout_below="@id/led_layout_top"
-        android:layout_above="@id/led_layout_bottom"
+        android:layout_below="@+id/led_layout_top"
+        android:layout_above="@+id/led_layout_bottom"
         android:orientation="vertical" />
 
     <LinearLayout
@@ -35,8 +36,8 @@
         android:layout_width="16dp"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/led_layout_top"
-        android:layout_above="@id/led_layout_bottom"
+        android:layout_below="@+id/led_layout_top"
+        android:layout_above="@+id/led_layout_bottom"
         android:orientation="vertical" />
 
     <Switch

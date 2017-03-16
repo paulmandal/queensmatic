@@ -19,6 +19,7 @@
 
     <!-- Drawing Activity -->
     <string name="error_sending_led_update">Error sending LED update.</string>
+    <string name="error_fetching_configuration">Error fetching configuration from API.</string>
     <string name="power_switch">Power</string>
     <string name="button_setup">Setup</string>
 </resources>

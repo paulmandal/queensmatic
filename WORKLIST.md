@@ -3,8 +3,6 @@
 
 ## Android App
 - LED Updating Screen
-  - Color sliders
-  - Brightness slider
   - LED display
   - Touch & intersection detection
   - API integration
@@ -24,7 +22,7 @@
 - Solder final circuit
 
 # In Progress
-- General - First End-to-End Test
+- LED Updating Screen - Skeleton
 
 # Blocked
 - Hardware - Build NAS - possible faulty RAM
@@ -44,6 +42,9 @@
 - Android App - App Skeleton - Main Screen
 - Android App - Configuration fetching & parsing
 - Android App - Configuration Screen (host, top/right/bottom/left LED counts)
+- General - First End-to-End Test
+- LED Updating Screen - Color & brightness sliders
+- LED Updating Screen - Color Preview & other UI
 
 # Icebox
 
