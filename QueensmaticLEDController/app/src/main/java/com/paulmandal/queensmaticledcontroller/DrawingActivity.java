@@ -1,5 +1,6 @@
 package com.paulmandal.queensmaticledcontroller;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -243,7 +244,13 @@ public class DrawingActivity extends AppCompatActivity {
             mAlertDialog = new AlertDialog.Builder(DrawingActivity.this)
                     .setTitle(getString(R.string.error_fetching_configuration))
                     .setMessage(getString(R.string.error_fetching_configuration))
-                    .setPositiveButton(android.R.string.ok, null)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mApiConnection.fetchConfiguration(mFetchConfigurationListener);
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel, null)
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
         }
