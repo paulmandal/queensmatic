@@ -2,8 +2,6 @@
 - Update SwaggerHub definition with response object
 
 ## Android App
-- LED Updating Screen
-  - Touch & intersection detection
 
 ## Hardware
 - OS Setup
@@ -15,12 +13,11 @@
   - Wall mounting
   - Light-bleed blocking?
 - Source screws, dampening grommets, air filters
-- Design circuit in Eagle
 - Prototype circuit on breadboards
 - Solder final circuit
 
 # In Progress
-- LED Updating Screen - Skeleton
+- Hardware - Design circuit in Eagle
 
 # Blocked
 - Hardware - Build NAS - possible faulty RAM
@@ -41,10 +38,13 @@
 - Android App - Configuration fetching & parsing
 - Android App - Configuration Screen (host, top/right/bottom/left LED counts)
 - General - First End-to-End Test
-- LED Updating Screen - Color & brightness sliders
-- LED Updating Screen - Color Preview & other UI
-- LED Updating Screen - LED display
-- LED Updating Screen - API integration
+- Android App - LED Updating Screen - Skeleton
+- Android App - LED Updating Screen - Color & brightness sliders
+- Android App - LED Updating Screen - Color Preview & other UI
+- Android App - LED Updating Screen - LED display
+- Android App - LED Updating Screen - API integration
+- Android App - LED Updating Screen - Touch & intersection detection
+- Android App - LED Updating Screen - Better abstraction in LED drawing (LayoutParams stuff)
 
 # Icebox
 

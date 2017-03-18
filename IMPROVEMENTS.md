@@ -7,5 +7,6 @@
 - Scoping in Arduino code - Arduino has some oddness going on there (don't want to define anything inside the loop())
 - Structs or classes in Arduino for message handling
 - Break Arduino code into smaller files
+- Improve touch detection in Android app - determine which strip the user is touching then determine which LED using only that strip's views
 - Unit Tests
 - Integration Tests

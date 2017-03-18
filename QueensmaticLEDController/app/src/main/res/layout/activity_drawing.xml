@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:style="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    android:id="@+id/root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black">
@@ -18,9 +18,9 @@
         android:id="@+id/led_layout_right"
         android:layout_width="32dp"
         android:layout_height="match_parent"
+        android:layout_above="@+id/led_layout_bottom"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/led_layout_top"
-        android:layout_above="@+id/led_layout_bottom"
         android:orientation="vertical" />
 
     <LinearLayout
@@ -35,73 +35,78 @@
         android:id="@+id/led_layout_left"
         android:layout_width="32dp"
         android:layout_height="match_parent"
+        android:layout_above="@+id/led_layout_bottom"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/led_layout_top"
-        android:layout_above="@+id/led_layout_bottom"
         android:orientation="vertical" />
 
-    <Switch
-        android:id="@+id/power_switch"
+    <RelativeLayout
+        android:id="@+id/controls_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/power_switch"
-        android:layout_below="@+id/led_layout_top"
-        android:layout_toEndOf="@+id/led_layout_left"
-        android:layout_marginStart="90dp"
-        android:layout_marginTop="50dp" />
+        android:layout_centerInParent="true">
 
-    <SeekBar
-        android:id="@+id/red_channel_seekbar"
-        android:layout_width="192dp"
-        android:layout_height="wrap_content"
-        android:max="255"
-        android:layout_below="@+id/power_switch"
-        android:layout_alignStart="@+id/power_switch"
-        android:layout_marginTop="59dp" />
+        <Switch
+            android:id="@+id/power_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:text="@string/power_switch" />
+
+        <SeekBar
+            android:id="@+id/red_channel_seekbar"
+            android:layout_width="128dp"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/power_switch"
+            android:layout_below="@+id/power_switch"
+            android:layout_marginTop="32dp"
+            android:max="255" />
 
 
-    <SeekBar
-        android:id="@+id/green_channel_seekbar"
-        android:layout_width="192dp"
-        android:layout_height="wrap_content"
-        android:max="255"
-        android:layout_below="@+id/red_channel_seekbar"
-        android:layout_alignStart="@+id/red_channel_seekbar"
-        android:layout_marginTop="16dp" />
+        <SeekBar
+            android:id="@+id/green_channel_seekbar"
+            android:layout_width="128dp"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/red_channel_seekbar"
+            android:layout_below="@+id/red_channel_seekbar"
+            android:layout_marginTop="12dp"
+            android:max="255" />
 
-    <SeekBar
-        android:id="@+id/blue_channel_seekbar"
-        android:layout_width="192dp"
-        android:layout_height="wrap_content"
-        android:max="255"
-        android:layout_below="@+id/green_channel_seekbar"
-        android:layout_alignStart="@+id/green_channel_seekbar"
-        android:layout_marginTop="16dp" />
+        <SeekBar
+            android:id="@+id/blue_channel_seekbar"
+            android:layout_width="128dp"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/green_channel_seekbar"
+            android:layout_below="@+id/green_channel_seekbar"
+            android:layout_marginTop="12dp"
+            android:max="255" />
 
-    <SeekBar
-        android:id="@+id/brightness_seekbar"
-        android:layout_width="192dp"
-        android:layout_height="wrap_content"
-        android:max="31"
-        android:layout_below="@+id/blue_channel_seekbar"
-        android:layout_alignStart="@+id/blue_channel_seekbar"
-        android:layout_marginTop="16dp" />
+        <SeekBar
+            android:id="@+id/brightness_seekbar"
+            android:layout_width="128dp"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/blue_channel_seekbar"
+            android:layout_below="@+id/blue_channel_seekbar"
+            android:layout_marginTop="12dp"
+            android:max="31" />
 
-    <View
-        android:id="@+id/color_preview"
-        android:layout_width="128dp"
-        android:layout_height="64dp"
-        android:layout_alignTop="@id/red_channel_seekbar"
-        android:layout_toRightOf="@id/red_channel_seekbar"
-        android:layout_marginLeft="32dp"/>
+        <View
+            android:id="@+id/color_preview"
+            android:layout_width="128dp"
+            android:layout_height="64dp"
+            android:layout_alignTop="@id/red_channel_seekbar"
+            android:layout_marginLeft="32dp"
+            android:layout_toRightOf="@id/red_channel_seekbar" />
 
-    <Button
-        android:id="@+id/button_setup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/power_switch"
-        android:layout_toRightOf="@+id/power_switch"
-        android:layout_marginLeft="32dp"
-        android:text="@string/button_setup" />
+        <Button
+            android:id="@+id/button_setup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/power_switch"
+            android:layout_marginLeft="32dp"
+            android:layout_toRightOf="@+id/power_switch"
+            android:text="@string/button_setup" />
+    </RelativeLayout>
 
 </RelativeLayout>

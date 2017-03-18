@@ -1,19 +1,16 @@
 package com.paulmandal.queensmaticledcontroller;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
@@ -21,6 +18,8 @@ import com.paulmandal.queensmaticledcontroller.api.ApiConnection;
 import com.paulmandal.queensmaticledcontroller.data.AppConfiguration;
 import com.paulmandal.queensmaticledcontroller.data.Configuration;
 import com.paulmandal.queensmaticledcontroller.data.Led;
+
+import static java.lang.Math.max;
 
 /**
  * Drawing activity - update LEDs via touch
@@ -83,6 +82,16 @@ public class DrawingActivity extends AppCompatActivity {
      * The Views representing LEDs
      */
     View[] mLedViews;
+
+    /**
+     * Rectangles for each LED view - for touch detection
+     */
+    Rect[] mLedRects;
+
+    /**
+     * Rect for areas that don't contain LEDs
+     */
+    Rect mDeadzone;
 
     /**
      * The View for the Color Preview
@@ -151,6 +160,18 @@ public class DrawingActivity extends AppCompatActivity {
             }
         });
 
+        // Dead zone rectangle (makes touch handling faster)
+        final View controlsLayout = findViewById(R.id.controls_layout);
+        controlsLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                controlsLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                mDeadzone = new Rect(mLedLayouts[LAYOUT_LEFT].getRight(), mLedLayouts[LAYOUT_TOP].getBottom(), mLedLayouts[LAYOUT_RIGHT].getLeft(), mLedLayouts[LAYOUT_BOTTOM].getTop());
+            }
+        });
+
+        // Touch handling
+        findViewById(R.id.root_layout).setOnTouchListener(mOnTouchListener);
     }
 
     @Override
@@ -237,6 +258,7 @@ public class DrawingActivity extends AppCompatActivity {
 
     private void updateLedSetup() {
         Configuration configuration = mConfiguration;
+        // Create new LED views with startup colors and brightness
         mLedCount = configuration.topLedCount + configuration.rightLedCount + configuration.bottomLedCount + configuration.leftLedCount;
         mLeds = new Led[mLedCount];
         mLedViews = new View[mLedCount];
@@ -246,7 +268,6 @@ public class DrawingActivity extends AppCompatActivity {
             mLeds[i] = new Led(i, configuration.startupBrightness, configuration.startupRed, configuration.startupGreen, configuration.startupBlue);
             mLedViews[i] = new View(DrawingActivity.this);
             mLedViews[i].setBackgroundColor(color);
-            mLedViews[i].setOnTouchListener(mLedTouchListener);
         }
         // Clear any existing LED Views
         for(int i = 0 ; i < LED_STRIPS ; i++) {
@@ -254,60 +275,82 @@ public class DrawingActivity extends AppCompatActivity {
         }
 
         // Draw views for each strip - hardware dependent
-        // TODO: abstract this
-        int width = mLedLayouts[LAYOUT_TOP].getWidth() / Math.max(configuration.topLedCount, 1);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, ViewGroup.LayoutParams.MATCH_PARENT);
-        for(int i = 0 ; i < configuration.topLedCount ; i++) {
-            mLedViews[i].setLayoutParams(params);
-            mLedLayouts[LAYOUT_TOP].addView(mLedViews[i]);
+        int stripLengths[] = { configuration.topLedCount, configuration.rightLedCount, configuration.bottomLedCount, configuration.leftLedCount };
+        int j = 0;
+        int end = 0;
+        for(int i = 0 ; i < mLedLayouts.length ; i++) {
+            // Create LayoutParams for vertical vs. horizontal
+            int width = ViewGroup.LayoutParams.MATCH_PARENT;
+            int height = ViewGroup.LayoutParams.MATCH_PARENT;
+            if(i % 2 == 0) {
+                width = mLedLayouts[i].getWidth() / max(stripLengths[i], 1);
+            } else {
+                height = mLedLayouts[i].getHeight() / max(stripLengths[i], 1);
+            }
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, height);
+            end = end + stripLengths[i];
+            for( ; j < end ; j++) {
+                mLedViews[j].setLayoutParams(params);
+                mLedLayouts[i].addView(mLedViews[j]);
+            }
         }
-        int height = mLedLayouts[LAYOUT_RIGHT].getHeight() / Math.max(configuration.rightLedCount, 1);
-        params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height);
-        for(int i = configuration.topLedCount ; i < configuration.rightLedCount ; i++) {
-            mLedViews[i].setLayoutParams(params);
-            mLedLayouts[LAYOUT_RIGHT].addView(mLedViews[i]);
-        }
-        width = mLedLayouts[LAYOUT_BOTTOM].getWidth() / Math.max(configuration.bottomLedCount, 1);
-        params = new LinearLayout.LayoutParams(width, ViewGroup.LayoutParams.MATCH_PARENT);
-        for(int i = configuration.rightLedCount ; i < configuration.bottomLedCount ; i++) {
-            mLedViews[i].setLayoutParams(params);
-            mLedLayouts[LAYOUT_BOTTOM].addView(mLedViews[i]);
-        }
-        height = mLedLayouts[LAYOUT_LEFT].getHeight() / Math.max(configuration.leftLedCount, 1);
-        params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height);
-        for(int i = configuration.bottomLedCount ; i < configuration.leftLedCount ; i++) {
-            mLedViews[i].setLayoutParams(params);
-            mLedLayouts[LAYOUT_LEFT].addView(mLedViews[i]);
+
+        // Build LED intersection Rects after the last view has drawn
+        mLedRects = null;
+        final View lastView = mLedViews[mLedCount - 1];
+        lastView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                lastView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                buildLedRects();
+            }
+        });
+    }
+
+    /**
+     * Builds LED intersection Rects
+     */
+    private void buildLedRects() {
+        mLedRects = new Rect[mLedCount];
+        View v;
+        for(int i = 0 ; i < mLedCount ; i++) {
+            v = mLedViews[i];
+            mLedRects[i] = new Rect(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
         }
     }
 
-
-    private View.OnTouchListener mLedTouchListener = new View.OnTouchListener() {
+    /**
+     * Handles touch detection - touches outside the LED strip or when the LED intersection Rects
+     * have not yet been created are ignored, any touch inside an LED strip causes an attempt to
+     * find the appropriate LED, set its color, and update the API
+     */
+    private View.OnTouchListener mOnTouchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            switch(event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    v.setBackgroundColor(mArgbColor);
-                    int i = indexOfLedByView(v);
-                    mLeds[i].red = mColor[RED];
-                    mLeds[i].green = mColor[GREEN];
-                    mLeds[i].blue = mColor[BLUE];
-                    mLeds[i].brightness = mColor[BRIGHTNESS];
-                    mApiConnection.sendLedUpdate(mLeds[i]);
+            if (mDeadzone.contains((int)event.getX(), (int)event.getY())
+                    || mLedRects == null) {
+                return true;
+            }
+            // Touch is inside one of the LED areas
+            int ledIndex = -1;
+            for(int i = 0 ; i < mLedCount ; i++) {
+                if(mLedRects[i].contains((int)event.getX(), (int)event.getY())) {
+                    ledIndex = i;
+                    break;
+                }
+            }
+            if(ledIndex > -1) {
+                mLedViews[ledIndex].setBackgroundColor(mArgbColor);
+                Led target = mLeds[ledIndex];
+                target.red = mColor[RED];
+                target.green = mColor[GREEN];
+                target.blue = mColor[BLUE];
+                target.brightness = mColor[BRIGHTNESS];
+                mApiConnection.sendLedUpdate(target);
             }
             return true;
         }
     };
-
-    int indexOfLedByView(View v) {
-        int i;
-        for(i = 0 ; i < mLedCount ; i++) {
-            if(mLedViews[i] == v) {
-                return i;
-            }
-        }
-        return -1;
-    }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
