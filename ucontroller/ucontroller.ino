@@ -40,14 +40,22 @@ int bufferPos;
 // Last read byte from serial
 char readByte;
 
+// Power PIN #
+const int POWER_PIN = 8;
+
+// Whether power is currently on
+boolean powerOn = false;
+
 /**
  * Init code
  */
 void setup() {
   Serial.begin(115200);
-  SPI.begin();  
+  SPI.begin();
+  pinMode(POWER_PIN, OUTPUT);
   allocateMemory();
   updateLeds();
+  updatePower();
 }
 
 /**
@@ -124,6 +132,15 @@ boolean processCommand(char *command, int commandLength) {
         return updateLed(values[0], values[1], values[2], values[3], values[4]);
       }
     }
+  } else if(command[0] == 'P') {
+    // Power update
+    char *seperator = strchr(command, ':');
+    if(seperator != NULL) {
+      seperator++;      
+      int powerState = atoi(seperator);
+      powerOn = powerState == 1 ? true : false;
+      updatePower();
+    }    
   } else if(command[0] == 'S') {
     // Output status - currently for debugging but could be adapted for bidirectional communication
     outputLedState(currentLedCount);
@@ -154,6 +171,15 @@ boolean updateLed(int ledNumber, int red, int green, int blue, int brightness) {
   }
   return needsUpdate;
 }
+
+/**
+ * Update Power PIN state
+ */
+ void updatePower() {
+  Serial.print("Updating power to: ");
+  Serial.println(powerOn);
+  digitalWrite(POWER_PIN, powerOn);
+ }
 
 /**
  * Output the current LED state to the serial port
