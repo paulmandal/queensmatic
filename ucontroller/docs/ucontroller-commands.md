@@ -19,3 +19,21 @@ Format: U:n,r,g,b,br
 | g           | Green channel value |
 | b           | Blue channel value  |
 | br          | Brightness          |
+
+## Power Update
+
+Format: P:n
+
+| Placeholder | Meaning             |
+| ------------| --------------------|
+| n           | 0 for off, 1 for on |
+
+## Status Request
+
+Format: R
+Response Format: P:n,T:c
+
+| Placeholder | Meaning                          |
+| ------------| ---------------------------------|
+| n           | power state, 0 for off, 1 for on |
+| c           | temperature in C                 |

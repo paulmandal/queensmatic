@@ -46,6 +46,9 @@ const int POWER_PIN = 8;
 // Whether power is currently on
 boolean powerOn = false;
 
+// Current temperature in C
+int currentTemp;
+
 /**
  * Init code
  */
@@ -98,7 +101,7 @@ void freeMemory() {
 }
 
 /**
- * Process a command and update the uController state
+ * Process a command and update the uController state, commands defined in docs/ucontroller-commands.md
  */
 boolean processCommand(char *command, int commandLength) {
   if(command[0] == 'C') {
@@ -140,7 +143,9 @@ boolean processCommand(char *command, int commandLength) {
       int powerState = atoi(seperator);
       powerOn = powerState == 1 ? true : false;
       updatePower();
-    }    
+    }
+  } else if(command[0] == 'R') {
+    sendStatusUpdate();
   } else if(command[0] == 'S') {
     // Output status - currently for debugging but could be adapted for bidirectional communication
     outputLedState(currentLedCount);
@@ -176,9 +181,17 @@ boolean updateLed(int ledNumber, int red, int green, int blue, int brightness) {
  * Update Power PIN state
  */
  void updatePower() {
-  Serial.print("Updating power to: ");
-  Serial.println(powerOn);
   digitalWrite(POWER_PIN, powerOn);
+ }
+
+/**
+ * Send status update to the Serial port
+ */
+ void sendStatusUpdate() {
+  Serial.print("P:");
+  Serial.print(powerOn);
+  Serial.print(",T:");
+  Serial.println(currentTemp);
  }
 
 /**
