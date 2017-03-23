@@ -42,6 +42,12 @@ def get_status():
     }
 
 
+def update_power(power_state):
+    command = 'P:%s' % ('1' if power_state else '0')
+    send(command)
+    return
+
+
 def send(command):
     with lock:
         serialPort.write(command.encode())

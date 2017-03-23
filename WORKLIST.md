@@ -14,11 +14,9 @@
   - Wall mounting
   - Light-bleed blocking?
 - Source screws, dampening grommets, air filters
-- Prototype circuit on breadboards
 - Order circuit board & SMD parts
 
 # In Progress
-- LED Controller API - Add /status endpoint with GET/PUT, wire up to R and P commands in uController, update SwaggerHub
 
 # Blocked
 - Hardware - Build NAS - possible faulty RAM
@@ -48,6 +46,7 @@
 - Android App - LED Updating Screen - Touch & intersection detection
 - Android App - LED Updating Screen - Better abstraction in LED drawing (LayoutParams stuff)
 - Hardware - Design circuit in Eagle
+- LED Controller API - Add /status endpoint with GET/PUT, wire up to R and P commands in uController, update SwaggerHub
 
 # Icebox
 
