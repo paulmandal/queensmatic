@@ -1346,7 +1346,7 @@ at 31/07/2012 09:37:13</description>
 <devices>
 <device name="" package="TO92-">
 <connects>
-<connect gate="G$1" pin="A" pad="3"/>
+<connect gate="G$1" pin="A" pad="1"/>
 <connect gate="G$1" pin="C" pad="2"/>
 </connects>
 <technologies>

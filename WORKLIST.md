@@ -17,6 +17,7 @@
 - Order circuit board & SMD parts
 
 # In Progress
+- Lay out PCB in Eagle
 
 # Blocked
 - Hardware - Build NAS - possible faulty RAM
