@@ -68,6 +68,40 @@ paths:
           description: LED updated
         400:
           description: invalid input, LED out of range, values out of range
+  /status:
+    get:
+      summary: retrieves uController status
+      operationId: getStatus
+      description: |
+        Retrieves the uController status
+      produces:
+      - application/json
+      responses:
+        200:
+          description: uController status
+          schema:
+            $ref: '#/definitions/Status'
+        400:
+          description: bad input parameter
+    put:
+      summary: updates the uController status
+      operationId: updateStatus
+      description: Updates the uController status
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: status
+        description: The new configuration
+        schema:
+          $ref: '#/definitions/Status'
+      responses:
+        201:
+          description: status updated
+        400:
+          description: invalid input, object invalid
 definitions:
   Configuration:
     type: object
@@ -133,5 +167,15 @@ definitions:
         type: integer
         format: 0-31
         example: 25
+  Status:
+    type: object
+    required:
+    - powerState
+    properties:
+      powerState:
+        type: boolean
+      mosfetTemperature:
+        type: number
+        example: 20.1
 host: somelinuxBox
 basePath: /led-control/

@@ -2,6 +2,7 @@
 - Update SwaggerHub definition with response object
 
 ## Android App
+- Hook up power button/switch
 
 ## Hardware
 - OS Setup
@@ -14,13 +15,14 @@
   - Light-bleed blocking?
 - Source screws, dampening grommets, air filters
 - Prototype circuit on breadboards
-- Solder final circuit
+- Order circuit board & SMD parts
 
 # In Progress
-- Hardware - Design circuit in Eagle
+- LED Controller API - Add /status endpoint with GET/PUT, wire up to R and P commands in uController, update SwaggerHub
 
 # Blocked
 - Hardware - Build NAS - possible faulty RAM
+- Hardware - prototype circuit on breadboards - need a SMD soldering iron tip for breakout
 
 # Finished
 - Hardware - Select & order hardware
@@ -45,6 +47,7 @@
 - Android App - LED Updating Screen - API integration
 - Android App - LED Updating Screen - Touch & intersection detection
 - Android App - LED Updating Screen - Better abstraction in LED drawing (LayoutParams stuff)
+- Hardware - Design circuit in Eagle
 
 # Icebox
 

@@ -18,7 +18,7 @@ ucontroller.set_config(configdb.get_config(), startup=True)
 @app.route('/configuration', methods=['GET'])
 def get_configuration():
     data = configdb.get_config()
-    return json.dumps(data)
+    return jsonify(data)
 
 
 @app.route('/configuration', methods=['PUT'])
@@ -41,6 +41,12 @@ def update_led():
     json = request.json
     ucontroller.update_led(json['ledNumber'], json['red'], json['green'], json['blue'], json['brightness'])
     return jsonify(message="LED updated"), 201
+
+
+@app.route('/status', methods=['GET'])
+def get_status():
+    status = ucontroller.get_status()
+    return jsonify(status)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=31337)
