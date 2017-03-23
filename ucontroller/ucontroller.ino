@@ -40,6 +40,12 @@ int bufferPos;
 // Last read byte from serial
 char readByte;
 
+// 10-bit ADC, measuring 0-5V, the LM335AZ sensor outputs 10mV/K
+const float ADC_STEPS_TO_MV = (5.0/*V*/ / 1024.0/*steps*/) * 100.0;
+
+// Temperature Pin #
+const int TEMPERATURE_PIN = 19;
+
 // Power PIN #
 const int POWER_PIN = 8;
 
@@ -47,7 +53,13 @@ const int POWER_PIN = 8;
 boolean powerOn = false;
 
 // Current temperature in C
-int currentTemp;
+float currentTemp = 0.0;
+
+// Maximum MOSFET temperature, above this threshold the system will automatically turn MOSFET-controlled power off
+const int MAX_MOSFET_TEMP = 40;
+
+// Whether to restore the power state after the MOSFET cools below MAX_MOSFET_TEMP
+boolean restorePowerState = false;
 
 /**
  * Init code
@@ -56,6 +68,7 @@ void setup() {
   Serial.begin(115200);
   SPI.begin();
   pinMode(POWER_PIN, OUTPUT);
+  pinMode(TEMPERATURE_PIN, INPUT);
   allocateMemory();
   updateLeds();
   updatePower();
@@ -82,6 +95,9 @@ void loop() {
       bufferPos = 0;
     }
   }
+  updateTemp();
+  checkTemp();
+  delay(100); // TODO: adjust delay time for smooth updates / add some delay logic?
 }
 
 /**
@@ -182,6 +198,26 @@ boolean updateLed(int ledNumber, int red, int green, int blue, int brightness) {
  */
  void updatePower() {
   digitalWrite(POWER_PIN, powerOn);
+ }
+
+/**
+ * Reads the temperature from the temperature pin
+ */
+ void updateTemp() {
+  currentTemp = analogRead(TEMPERATURE_PIN) * ADC_STEPS_TO_MV - 273.15; // approximate Kelvin->Celsius
+ }
+
+/**
+ * Checks whether the temperature is at an acceptable level
+ */
+ void checkTemp() {
+  if(currentTemp > MAX_MOSFET_TEMP) {
+    digitalWrite(POWER_PIN, LOW);
+    restorePowerState = true;
+  } else if(restorePowerState) {
+    restorePowerState = false;
+    digitalWrite(POWER_PIN, powerOn);
+  }
  }
 
 /**
