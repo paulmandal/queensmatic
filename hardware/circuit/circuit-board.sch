@@ -1424,6 +1424,56 @@ Big oval pads</description>
 </deviceset>
 </devicesets>
 </library>
+<library name="solpad">
+<description>&lt;b&gt;Solder Pads/Test Points&lt;/b&gt;&lt;p&gt;
+&lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
+<packages>
+<package name="SE14">
+<description>&lt;b&gt;SOLDER PAD&lt;/b&gt;&lt;p&gt;
+drill 1.4 mm</description>
+<wire x1="-1.524" y1="0.635" x2="-1.524" y2="-0.635" width="0.1524" layer="21"/>
+<wire x1="0.635" y1="-1.524" x2="1.524" y2="-0.635" width="0.1524" layer="21"/>
+<wire x1="0.635" y1="1.524" x2="1.524" y2="0.635" width="0.1524" layer="21"/>
+<wire x1="1.524" y1="0.635" x2="1.524" y2="-0.635" width="0.1524" layer="21"/>
+<wire x1="-1.524" y1="0.635" x2="-0.635" y2="1.524" width="0.1524" layer="21"/>
+<wire x1="-0.635" y1="1.524" x2="0.635" y2="1.524" width="0.1524" layer="21"/>
+<wire x1="-0.635" y1="-1.524" x2="-1.524" y2="-0.635" width="0.1524" layer="21"/>
+<wire x1="0.635" y1="-1.524" x2="-0.635" y2="-1.524" width="0.1524" layer="21"/>
+<circle x="0" y="0" radius="0.762" width="0.1524" layer="51"/>
+<circle x="0" y="0" radius="0.381" width="0.254" layer="51"/>
+<pad name="MP" x="0" y="0" drill="1.397" diameter="2.54" shape="octagon"/>
+<text x="-1.397" y="1.778" size="1.27" layer="25" ratio="10">&gt;NAME</text>
+<text x="0" y="0.381" size="0.0254" layer="27">&gt;VALUE</text>
+</package>
+</packages>
+<symbols>
+<symbol name="LSP">
+<wire x1="-1.016" y1="2.032" x2="1.016" y2="0" width="0.254" layer="94"/>
+<wire x1="-1.016" y1="0" x2="1.016" y2="2.032" width="0.254" layer="94"/>
+<circle x="0" y="1.016" radius="1.016" width="0.4064" layer="94"/>
+<text x="-1.27" y="2.921" size="1.778" layer="95">&gt;NAME</text>
+<pin name="MP" x="0" y="-2.54" visible="off" length="short" direction="pas" rot="R90"/>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="SE14" prefix="LSP">
+<description>&lt;b&gt;SOLDER PAD&lt;/b&gt;&lt;p&gt; E1553,  drill 1,4mm, distributor Buerklin, 07F820</description>
+<gates>
+<gate name="1" symbol="LSP" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="SE14">
+<connects>
+<connect gate="1" pin="MP" pad="MP"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
 </libraries>
 <attributes>
 </attributes>
@@ -1452,6 +1502,8 @@ Big oval pads</description>
 <part name="GND1" library="supply1" deviceset="GND" device=""/>
 <part name="R3" library="SparkFun-Resistors" deviceset="1KOHM" device="-0603-1/10W-1%" value="1k"/>
 <part name="T1" library="adafruit" deviceset="2N2222" device=""/>
+<part name="LSP1" library="solpad" deviceset="SE14" device=""/>
+<part name="LSP2" library="solpad" deviceset="SE14" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -1476,6 +1528,8 @@ Big oval pads</description>
 <instance part="GND1" gate="1" x="17.78" y="127" rot="R180"/>
 <instance part="R3" gate="G$1" x="17.78" y="106.68" rot="R270"/>
 <instance part="T1" gate="G$1" x="88.9" y="50.8"/>
+<instance part="LSP1" gate="1" x="101.6" y="43.18" rot="R270"/>
+<instance part="LSP2" gate="1" x="104.14" y="86.36" rot="R270"/>
 </instances>
 <busses>
 </busses>
@@ -1494,7 +1548,11 @@ Big oval pads</description>
 <segment>
 <pinref part="T1" gate="G$1" pin="E"/>
 <pinref part="GND5" gate="1" pin="GNDA"/>
-<wire x1="91.44" y1="40.64" x2="91.44" y2="45.72" width="0.1524" layer="91"/>
+<wire x1="91.44" y1="40.64" x2="91.44" y2="43.18" width="0.1524" layer="91"/>
+<pinref part="LSP1" gate="1" pin="MP"/>
+<wire x1="91.44" y1="43.18" x2="91.44" y2="45.72" width="0.1524" layer="91"/>
+<wire x1="99.06" y1="43.18" x2="91.44" y2="43.18" width="0.1524" layer="91"/>
+<junction x="91.44" y="43.18"/>
 </segment>
 </net>
 <net name="+5V" class="0">
@@ -1506,7 +1564,11 @@ Big oval pads</description>
 <segment>
 <pinref part="P+1" gate="1" pin="+5V"/>
 <pinref part="LED1" gate="G$1" pin="VCC"/>
-<wire x1="93.98" y1="83.82" x2="93.98" y2="90.17" width="0.1524" layer="91"/>
+<wire x1="93.98" y1="83.82" x2="93.98" y2="86.36" width="0.1524" layer="91"/>
+<pinref part="LSP2" gate="1" pin="MP"/>
+<wire x1="93.98" y1="86.36" x2="93.98" y2="90.17" width="0.1524" layer="91"/>
+<wire x1="101.6" y1="86.36" x2="93.98" y2="86.36" width="0.1524" layer="91"/>
+<junction x="93.98" y="86.36"/>
 </segment>
 <segment>
 <pinref part="P+3" gate="1" pin="+5V"/>
