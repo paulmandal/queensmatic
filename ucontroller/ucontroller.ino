@@ -41,7 +41,7 @@ int bufferPos;
 char readByte;
 
 // 10-bit ADC, measuring 0-5V, the LM335AZ sensor outputs 10mV/K
-const float ADC_STEPS_TO_MV = (5.0/*V*/ / 1024.0/*steps*/) * 100.0;
+const float ADC_STEPS_TO_CV = (5.0/*V*/ / 1024.0/*steps*/) * 100.0/*cV/V*/;
 
 // Temperature Pin #
 const int TEMPERATURE_PIN = 19;
@@ -204,7 +204,7 @@ boolean updateLed(int ledNumber, int red, int green, int blue, int brightness) {
  * Reads the temperature from the temperature pin
  */
  void updateTemp() {
-  currentTemp = analogRead(TEMPERATURE_PIN) * ADC_STEPS_TO_MV - 273.15; // approximate Kelvin->Celsius
+  currentTemp = analogRead(TEMPERATURE_PIN) * ADC_STEPS_TO_CV - 273.15; // steps->cV, 1cV/K, Kelvin->Celsius
  }
 
 /**
