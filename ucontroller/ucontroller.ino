@@ -198,6 +198,10 @@ boolean updateLed(int ledNumber, int red, int green, int blue, int brightness) {
  */
  void updatePower() {
   digitalWrite(POWER_PIN, powerOn);
+  if(powerOn) {
+    delay(50);
+    updateLeds();
+  }
  }
 
 /**
