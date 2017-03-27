@@ -44,10 +44,10 @@ char readByte;
 const float ADC_STEPS_TO_CV = (5.0/*V*/ / 1024.0/*steps*/) * 100.0/*cV/V*/;
 
 // Temperature Pin #
-const int TEMPERATURE_PIN = 19;
+const int TEMPERATURE_PIN = 21;
 
 // Power PIN #
-const int POWER_PIN = 8;
+const int POWER_PIN = 10;
 
 // Whether power is currently on
 boolean powerOn = false;
