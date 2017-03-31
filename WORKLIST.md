@@ -1,9 +1,6 @@
 # To Do
 - Update SwaggerHub definition with response object
 
-## Android App
-- Hook up power button/switch
-
 ## Hardware
 - OS Setup
 - Design Case
@@ -17,7 +14,7 @@
 - Order circuit board & SMD parts
 
 # In Progress
-- Lay out PCB in Eagle
+- Android App - Hook up power button/switch
 
 # Blocked
 - Hardware - Build NAS - possible faulty RAM
@@ -48,6 +45,7 @@
 - Hardware - Design circuit in Eagle
 - LED Controller API - Add /status endpoint with GET/PUT, wire up to R and P commands in uController, update SwaggerHub
 - Hardware - prototype circuit on breadboards - need a SMD soldering iron tip for breakout
+- Hardware - Lay out PCB in Eagle
 
 # Icebox
 
