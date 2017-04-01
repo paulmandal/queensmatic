@@ -1,26 +1,16 @@
 package com.paulmandal.queensmaticledcontroller.workers;
 
-import android.support.annotation.NonNull;
-
 import com.paulmandal.queensmaticledcontroller.api.LedApi;
-import com.paulmandal.queensmaticledcontroller.data.SystemStatus;
 
 /**
  * Worker that polls the API for system status updates
  */
-public class SystemStatusWorker implements Runnable, LedApi.FetchSystemStatusListener {
+public class SystemStatusWorker implements Runnable {
 
     /**
      * Frequency to request a system status update (ms)
      */
     private static final int DEFAULT_POLLING_INTERVAL = 1000;
-
-    /**
-     * Interface for listeners to receive system status updates through
-     */
-    public interface SystemStatusUpdateListener {
-        void onSystemStatusUpdated(@NonNull SystemStatus systemStatus);
-    }
 
     /**
      * Thread this worker is running on
@@ -35,11 +25,11 @@ public class SystemStatusWorker implements Runnable, LedApi.FetchSystemStatusLis
     /**
      * Listener for this worker
      */
-    private SystemStatusUpdateListener mSystemStatusUpdateListener;
+    private LedApi.FetchSystemStatusListener mFetchSystemStatusListener;
 
-    public SystemStatusWorker(LedApi ledApi, SystemStatusUpdateListener systemStatusUpdateListener) {
+    public SystemStatusWorker(LedApi ledApi, LedApi.FetchSystemStatusListener fetchSystemStatusListener) {
         mLedApi = ledApi;
-        mSystemStatusUpdateListener = systemStatusUpdateListener;
+        mFetchSystemStatusListener = fetchSystemStatusListener;
     }
 
     /**
@@ -66,25 +56,12 @@ public class SystemStatusWorker implements Runnable, LedApi.FetchSystemStatusLis
     public void run() {
         while (mThread != null) {
             try {
-                mLedApi.fetchSystemStatus(this);
+                mLedApi.fetchSystemStatus(mFetchSystemStatusListener);
                 Thread.sleep(DEFAULT_POLLING_INTERVAL);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-    }
-
-    /**
-     * Listener implementations - simply forward the events
-     */
-    @Override
-    public void onSystemStatusFetched(@NonNull SystemStatus systemStatus) {
-        mSystemStatusUpdateListener.onSystemStatusUpdated(systemStatus);
-    }
-
-    @Override
-    public void onSystemStatusFetchError() {
-        // Drop errors
     }
 
 }

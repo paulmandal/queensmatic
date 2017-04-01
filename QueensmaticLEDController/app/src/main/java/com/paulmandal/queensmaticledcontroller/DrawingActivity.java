@@ -205,7 +205,7 @@ public class DrawingActivity extends AppCompatActivity {
             mLedApi.fetchConfiguration(mFetchConfigurationListener);
         }
         if (mSystemStatusWorker == null) {
-            mSystemStatusWorker = new SystemStatusWorker(mLedApi, mSystemStatusUpdateListener);
+            mSystemStatusWorker = new SystemStatusWorker(mLedApi, mFetchSystemStatusListener);
         }
         mSystemStatusWorker.start();
     }
@@ -294,13 +294,18 @@ public class DrawingActivity extends AppCompatActivity {
     /**
      * System Status update listener
      */
-    private SystemStatusWorker.SystemStatusUpdateListener mSystemStatusUpdateListener = new SystemStatusWorker.SystemStatusUpdateListener() {
+    private LedApi.FetchSystemStatusListener mFetchSystemStatusListener = new LedApi.FetchSystemStatusListener() {
         @Override
-        public void onSystemStatusUpdated(@NonNull SystemStatus systemStatus) {
+        public void onSystemStatusFetched(@NonNull SystemStatus systemStatus) {
             if (systemStatus.powerState != mPowerSwitch.isChecked()) {
                 mPowerSwitch.setChecked(systemStatus.powerState);
             }
             mMosfetTemperature.setText(getString(R.string.degrees_celsius, systemStatus.mosfetTemperature));
+        }
+
+        @Override
+        public void onSystemStatusFetchError() {
+            // Do nothing
         }
     };
 
