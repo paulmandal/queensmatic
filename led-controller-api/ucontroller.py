@@ -38,7 +38,7 @@ def get_status():
     matcher = statusPattern.match(statusLine)
     return {
         'powerState': matcher.group('power_state') == 1,
-        'mosfetTemperature': matcher.group('mosfet_temperature')
+        'mosfetTemperature': float(matcher.group('mosfet_temperature'))
     }
 
 
