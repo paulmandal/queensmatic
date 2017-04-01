@@ -6,12 +6,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.paulmandal.queensmaticledcontroller.api.ApiConnection;
+import com.paulmandal.queensmaticledcontroller.api.LedApi;
 import com.paulmandal.queensmaticledcontroller.data.AppConfiguration;
 import com.paulmandal.queensmaticledcontroller.data.Configuration;
 
@@ -28,7 +27,7 @@ public class ConfigActivity extends AppCompatActivity {
     /**
      * API Connection
      */
-    ApiConnection mApiConnection;
+    LedApi mLedApi;
 
     /**
      * Current application configuration
@@ -65,22 +64,22 @@ public class ConfigActivity extends AppCompatActivity {
         setContentView(R.layout.activity_config);
 
         // Get UI element references
-        mHostname = (TextView)findViewById(R.id.hostname);
-        mTopLedCount = (TextView)findViewById(R.id.top_led_count);
-        mRightLedCount = (TextView)findViewById(R.id.right_led_count);
-        mBottomLedCount = (TextView)findViewById(R.id.bottom_led_count);
-        mLeftLedCount = (TextView)findViewById(R.id.left_led_count);
-        mStartupBrightness = (TextView)findViewById(R.id.startup_brightness);
-        mStartupRed = (TextView)findViewById(R.id.startup_red);
-        mStartupGreen = (TextView)findViewById(R.id.startup_green);
-        mStartupBlue = (TextView)findViewById(R.id.startup_blue);
-        mSaveButton = (Button)findViewById(R.id.button_save);
+        mHostname = (TextView) findViewById(R.id.hostname);
+        mTopLedCount = (TextView) findViewById(R.id.top_led_count);
+        mRightLedCount = (TextView) findViewById(R.id.right_led_count);
+        mBottomLedCount = (TextView) findViewById(R.id.bottom_led_count);
+        mLeftLedCount = (TextView) findViewById(R.id.left_led_count);
+        mStartupBrightness = (TextView) findViewById(R.id.startup_brightness);
+        mStartupRed = (TextView) findViewById(R.id.startup_red);
+        mStartupGreen = (TextView) findViewById(R.id.startup_green);
+        mStartupBlue = (TextView) findViewById(R.id.startup_blue);
+        mSaveButton = (Button) findViewById(R.id.button_save);
 
         mHostname.setOnFocusChangeListener(mHostnameFocusListener);
         mSaveButton.setOnClickListener(mSaveButtonListener);
 
         mAppConfiguration = new AppConfiguration(this);
-        mApiConnection = ApiConnection.apiConnectionFactory(this, mAppConfiguration.getHostname());
+        mLedApi = LedApi.ledApiFactory(this, mAppConfiguration.getHostname());
     }
 
     @Override
@@ -88,10 +87,10 @@ public class ConfigActivity extends AppCompatActivity {
         super.onResume();
         // Fetch config if hostname is available
         String hostname = mAppConfiguration.getHostname();
-        if(hostname != null) {
+        if (hostname != null) {
             mHostname.setText(hostname);
             mAppConfiguration.setHostname(hostname);
-            mApiConnection.fetchConfiguration(mFetchConfigurationListener);
+            mLedApi.fetchConfiguration(mFetchConfigurationListener);
         } else {
             mHostname.setText(EMPTY_HOSTNAME);
             mHostname.requestFocus();
@@ -100,7 +99,7 @@ public class ConfigActivity extends AppCompatActivity {
 
     @Override
     public void onPause() {
-        if(mAlertDialog != null) {
+        if (mAlertDialog != null) {
             mAlertDialog.dismiss();
         }
         super.onPause();
@@ -113,19 +112,22 @@ public class ConfigActivity extends AppCompatActivity {
     private View.OnFocusChangeListener mHostnameFocusListener = new View.OnFocusChangeListener() {
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
-            if(!hasFocus) {
+            if (!hasFocus) {
                 String hostname = mHostname.getText().toString();
                 boolean hostnameChanged = !hostname.equals(mAppConfiguration.getHostname());
-                if(!hostname.equals(EMPTY_HOSTNAME) && hostnameChanged) {
+                if (!hostname.equals(EMPTY_HOSTNAME) && hostnameChanged) {
                     mAppConfiguration.setHostname(hostname);
-                    mApiConnection.setHostname(hostname);
-                    mApiConnection.fetchConfiguration(mFetchConfigurationListener);
+                    mLedApi.setHostname(hostname);
+                    mLedApi.fetchConfiguration(mFetchConfigurationListener);
                 }
             }
         }
     };
 
-    private ApiConnection.FetchConfigurationListener mFetchConfigurationListener = new ApiConnection.FetchConfigurationListener() {
+    /**
+     * Configuration fetching listener
+     */
+    private LedApi.FetchConfigurationListener mFetchConfigurationListener = new LedApi.FetchConfigurationListener() {
         @Override
         public void onConfigurationFetched(@NonNull Configuration configuration) {
             mConfiguration = configuration;
@@ -138,7 +140,10 @@ public class ConfigActivity extends AppCompatActivity {
         }
     };
 
-    private ApiConnection.StoreConfigurationListener mStoreConfigurationListener = new ApiConnection.StoreConfigurationListener() {
+    /**
+     * Configuration storing listener
+     */
+    private LedApi.StoreConfigurationListener mStoreConfigurationListener = new LedApi.StoreConfigurationListener() {
         @Override
         public void onConfigurationStored() {
             configSaved();
@@ -179,8 +184,8 @@ public class ConfigActivity extends AppCompatActivity {
                     bottomLedCount, leftLedCount, startupBrightness, startupRed,
                     startupGreen, startupBlue);
 
-            if(!mConfiguration.equals(configuration)) {
-                mApiConnection.sendConfiguration(mStoreConfigurationListener, configuration);
+            if (!mConfiguration.equals(configuration)) {
+                mLedApi.sendConfiguration(mStoreConfigurationListener, configuration);
             } else {
                 configSaved();
             }
@@ -218,6 +223,9 @@ public class ConfigActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * Configuration saved - go back to the ConfigCheck activity
+     */
     private void configSaved() {
         Intent i = new Intent(ConfigActivity.this, ConfigCheck.class);
         startActivity(i);

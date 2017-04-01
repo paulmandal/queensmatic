@@ -16,6 +16,7 @@ public class ApiTranslator {
 
     /**
      * Creates a Configuration from a JSON object
+     *
      * @param json JSONObject containing Configuration data
      * @return Configuration object representation of supplied JSON, or null if there was a parsing error
      */
@@ -33,7 +34,7 @@ public class ApiTranslator {
 
             return new Configuration(topLedCount, rightLedCount, bottomLedCount, leftLedCount,
                     startupBrightness, startupRed, startupGreen, startupBlue);
-        } catch(JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         return null;
@@ -41,6 +42,7 @@ public class ApiTranslator {
 
     /**
      * Creates a JSONObject representation of the supplied Configuration
+     *
      * @param configuration the Configuration to translate to JSON
      * @return JSONObject representation of the supplied Configuration, or null if there was an error
      */
@@ -60,7 +62,7 @@ public class ApiTranslator {
             json.put("startupBlue", configuration.startupBlue);
 
             return json;
-        } catch(JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         return null;
@@ -68,6 +70,7 @@ public class ApiTranslator {
 
     /**
      * Creates a SystemStatus from a JSON object
+     *
      * @param json JSONObject containing SystemStatus data
      * @return SystemStatus object representation of supplied JSON, or null if there was a parsing error
      */
@@ -75,7 +78,7 @@ public class ApiTranslator {
     public static SystemStatus systemStatusFromJson(JSONObject json) {
         try {
             boolean powerState = json.getBoolean("powerState");
-            float mosfetTemperature = (float)json.getDouble("mosfetTemperature");
+            float mosfetTemperature = (float) json.getDouble("mosfetTemperature");
 
             return new SystemStatus(powerState, mosfetTemperature);
         } catch (JSONException e) {
@@ -99,7 +102,7 @@ public class ApiTranslator {
             json.put("powerState", systemStatus.powerState);
 
             return json;
-        } catch(JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         return null;
@@ -107,6 +110,7 @@ public class ApiTranslator {
 
     /**
      * Creates a JSONObject representation of an LED state
+     *
      * @param led The LED to translate to JSON
      * @return JSONObject representation of the supplied LED, or null if there was an error
      */
@@ -123,7 +127,7 @@ public class ApiTranslator {
             json.put("brightness", led.brightness);
 
             return json;
-        } catch(JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         return null;

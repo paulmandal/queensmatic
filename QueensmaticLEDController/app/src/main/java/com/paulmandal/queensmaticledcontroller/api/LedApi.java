@@ -22,7 +22,7 @@ import org.json.JSONObject;
 /**
  * Handles communication with the API
  */
-public class ApiConnection {
+public class LedApi {
 
     /**
      * API Endpoints
@@ -36,6 +36,7 @@ public class ApiConnection {
      */
     public interface FetchConfigurationListener {
         void onConfigurationFetched(@NonNull Configuration configuration);
+
         void onConfigurationFetchError();
     }
 
@@ -44,6 +45,7 @@ public class ApiConnection {
      */
     public interface FetchSystemStatusListener {
         void onSystemStatusFetched(@NonNull SystemStatus systemStatus);
+
         void onSystemStatusFetchError();
     }
 
@@ -52,6 +54,7 @@ public class ApiConnection {
      */
     public interface StoreConfigurationListener {
         void onConfigurationStored();
+
         void onConfigurationStoreError();
     }
 
@@ -65,18 +68,26 @@ public class ApiConnection {
      */
     private String mHostname;
 
-    public ApiConnection(RequestQueue requestQueue, String hostname) {
+    public LedApi(RequestQueue requestQueue, String hostname) {
         mRequestQueue = requestQueue;
         mHostname = hostname;
         mRequestQueue.start();
     }
 
-    public static ApiConnection apiConnectionFactory(Context context, String hostname) {
+    /**
+     * Factory method for creating LedApi instances
+     */
+    public static LedApi ledApiFactory(Context context, String hostname) {
         Cache cache = new DiskBasedCache(context.getCacheDir(), 1024);
         Network network = new BasicNetwork(new HurlStack());
-        return new ApiConnection(new RequestQueue(cache, network), hostname);
+        return new LedApi(new RequestQueue(cache, network), hostname);
     }
 
+    /**
+     * Set the hostname this LedApi instance will send commands to
+     *
+     * @param hostname The hostname this LedApi instance will send commands to
+     */
     public void setHostname(String hostname) {
         mHostname = hostname;
     }
@@ -90,10 +101,11 @@ public class ApiConnection {
         JsonObjectRequest request = new JsonObjectRequest
                 (Request.Method.GET, mHostname + CONFIGURATION_ENDPOINT, null, new Response.Listener<JSONObject>() {
                     FetchConfigurationListener mListener = listener;
+
                     @Override
                     public void onResponse(JSONObject response) {
                         Configuration configuration = ApiTranslator.configurationFromJson(response);
-                        if(configuration != null) {
+                        if (configuration != null) {
                             mListener.onConfigurationFetched(configuration);
                         } else {
                             mListener.onConfigurationFetchError();
@@ -101,6 +113,7 @@ public class ApiConnection {
                     }
                 }, new Response.ErrorListener() {
                     FetchConfigurationListener mListener = listener;
+
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         error.printStackTrace();
@@ -113,21 +126,23 @@ public class ApiConnection {
     /**
      * Stores a Configuration using the API
      *
-     * @param listener  Callback for async store operation
+     * @param listener      Callback for async store operation
      * @param configuration
      */
     public void sendConfiguration(final StoreConfigurationListener listener, Configuration configuration) {
         JSONObject json = ApiTranslator.jsonObjectFromConfiguration(configuration);
-        if(json != null) {
+        if (json != null) {
             JsonObjectRequest request = new JsonObjectRequest
                     (Request.Method.PUT, mHostname + CONFIGURATION_ENDPOINT, json, new Response.Listener<JSONObject>() {
                         StoreConfigurationListener mListener = listener;
+
                         @Override
                         public void onResponse(JSONObject response) {
                             mListener.onConfigurationStored();
                         }
                     }, new Response.ErrorListener() {
                         StoreConfigurationListener mListener = listener;
+
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             error.printStackTrace();
@@ -149,10 +164,11 @@ public class ApiConnection {
         JsonObjectRequest request = new JsonObjectRequest
                 (Request.Method.GET, mHostname + STATUS_ENDPOINT, null, new Response.Listener<JSONObject>() {
                     FetchSystemStatusListener mListener = listener;
+
                     @Override
                     public void onResponse(JSONObject response) {
                         SystemStatus systemStatus = ApiTranslator.systemStatusFromJson(response);
-                        if(systemStatus != null) {
+                        if (systemStatus != null) {
                             mListener.onSystemStatusFetched(systemStatus);
                         } else {
                             mListener.onSystemStatusFetchError();
@@ -160,6 +176,7 @@ public class ApiConnection {
                     }
                 }, new Response.ErrorListener() {
                     FetchSystemStatusListener mListener = listener;
+
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         error.printStackTrace();
@@ -176,7 +193,7 @@ public class ApiConnection {
      */
     public void sendPowerUpdate(boolean powerState) {
         JSONObject json = ApiTranslator.jsonObjectFromSystemStatus(new SystemStatus(powerState, 0.0f));
-        if(json != null) {
+        if (json != null) {
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, mHostname + STATUS_ENDPOINT, json, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) { /* Do nothing */ }
@@ -194,11 +211,12 @@ public class ApiConnection {
      * Sends an LED Update to the API - these are sent blind (no callback) because the user
      * should be able to visually confirm that the updates are happening, error reporting/handling
      * of some kind would be a nice addition, though.
+     *
      * @param led The LED to update
      */
     public void sendLedUpdate(Led led) {
         JSONObject json = ApiTranslator.jsonObjectFromLed(led);
-        if(json != null) {
+        if (json != null) {
             JsonObjectRequest request = new JsonObjectRequest
                     (Request.Method.PUT, mHostname + LED_UPDATE_ENDPOINT, json, new Response.Listener<JSONObject>() {
                         @Override

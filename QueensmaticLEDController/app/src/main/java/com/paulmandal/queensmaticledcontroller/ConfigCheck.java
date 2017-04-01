@@ -15,7 +15,7 @@ import com.paulmandal.queensmaticledcontroller.data.AppConfiguration;
  * Initial check for the presence of hostname - if no hostname is found redirect to the settings
  * activity
  */
-public class ConfigCheck  extends AppCompatActivity {
+public class ConfigCheck extends AppCompatActivity {
 
     /**
      * Internet permission request code
@@ -47,6 +47,9 @@ public class ConfigCheck  extends AppCompatActivity {
         }
     }
 
+    /**
+     * Check for INTERNET permissions
+     */
     private void checkPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, INTERNET_PERMISSION_REQUEST);
@@ -55,10 +58,14 @@ public class ConfigCheck  extends AppCompatActivity {
         }
     }
 
+    /**
+     * Open the appropriate activity - ConfigActivity if no hostname has been previously configured
+     * Otherwise DrawingActivity
+     */
     private void chooseActivity() {
         Intent i;
         AppConfiguration appConfiguration = new AppConfiguration(this);
-        if(appConfiguration.getHostname() == null) {
+        if (appConfiguration.getHostname() == null) {
             // Head to Config activity
             i = new Intent(this, ConfigActivity.class);
         } else {

@@ -2,13 +2,13 @@ package com.paulmandal.queensmaticledcontroller.workers;
 
 import android.support.annotation.NonNull;
 
-import com.paulmandal.queensmaticledcontroller.api.ApiConnection;
+import com.paulmandal.queensmaticledcontroller.api.LedApi;
 import com.paulmandal.queensmaticledcontroller.data.SystemStatus;
 
 /**
  * Worker that polls the API for system status updates
  */
-public class SystemStatusWorker implements Runnable, ApiConnection.FetchSystemStatusListener {
+public class SystemStatusWorker implements Runnable, LedApi.FetchSystemStatusListener {
 
     /**
      * Frequency to request a system status update (ms)
@@ -27,19 +27,18 @@ public class SystemStatusWorker implements Runnable, ApiConnection.FetchSystemSt
      */
     private Thread mThread;
 
-
     /**
      * LED API
      */
-    private ApiConnection mApiConnection;
+    private LedApi mLedApi;
 
     /**
      * Listener for this worker
      */
     private SystemStatusUpdateListener mSystemStatusUpdateListener;
 
-    public SystemStatusWorker(ApiConnection apiConnection, SystemStatusUpdateListener systemStatusUpdateListener) {
-        mApiConnection = apiConnection;
+    public SystemStatusWorker(LedApi ledApi, SystemStatusUpdateListener systemStatusUpdateListener) {
+        mLedApi = ledApi;
         mSystemStatusUpdateListener = systemStatusUpdateListener;
     }
 
@@ -47,22 +46,28 @@ public class SystemStatusWorker implements Runnable, ApiConnection.FetchSystemSt
      * Starts the worker
      */
     public void start() {
-        if(mThread == null) {
+        if (mThread == null) {
             mThread = new Thread(this);
         }
         mThread.start();
     }
 
+    /**
+     * Stops the worker
+     */
     public void stop() {
         mThread = null;
     }
 
+    /**
+     * Worker loop, fetches the system status then sleeps
+     */
     @Override
     public void run() {
-        while(mThread != null) {
+        while (mThread != null) {
             try {
-                mApiConnection.fetchSystemStatus(this);
-                mThread.sleep(DEFAULT_POLLING_INTERVAL);
+                mLedApi.fetchSystemStatus(this);
+                Thread.sleep(DEFAULT_POLLING_INTERVAL);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

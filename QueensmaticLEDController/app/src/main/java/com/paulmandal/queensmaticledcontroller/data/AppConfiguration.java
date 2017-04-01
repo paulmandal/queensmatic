@@ -39,7 +39,7 @@ public class AppConfiguration {
      */
     @Nullable
     public String getHostname() {
-        if(mHostname == null) {
+        if (mHostname == null) {
             SharedPreferences prefs = mContext.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
             mHostname = prefs.getString(HOSTNAME_PREFS_KEY, null);
         }
@@ -56,7 +56,7 @@ public class AppConfiguration {
         SharedPreferences prefs = mContext.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(HOSTNAME_PREFS_KEY, hostname);
-        if(editor.commit()) {
+        if (editor.commit()) {
             mHostname = hostname;
             return true;
         }

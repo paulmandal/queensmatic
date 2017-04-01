@@ -17,7 +17,7 @@ import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.paulmandal.queensmaticledcontroller.api.ApiConnection;
+import com.paulmandal.queensmaticledcontroller.api.LedApi;
 import com.paulmandal.queensmaticledcontroller.data.AppConfiguration;
 import com.paulmandal.queensmaticledcontroller.data.Configuration;
 import com.paulmandal.queensmaticledcontroller.data.Led;
@@ -37,7 +37,7 @@ public class DrawingActivity extends AppCompatActivity {
     private static final int LED_STRIPS = 4;
 
     /**
-     * TODO: desc
+     * Indexes for LED layouts
      */
     private static final int LAYOUT_TOP = 0;
     private static final int LAYOUT_RIGHT = 1;
@@ -45,7 +45,7 @@ public class DrawingActivity extends AppCompatActivity {
     private static final int LAYOUT_LEFT = 3;
 
     /**
-     * TODO: desc
+     * Indexes for LED color/brightness channels
      */
     private static final int RED = 0;
     private static final int GREEN = 1;
@@ -55,7 +55,7 @@ public class DrawingActivity extends AppCompatActivity {
     /**
      * Reference to the API connection
      */
-    private ApiConnection mApiConnection;
+    private LedApi mLedApi;
 
     /**
      * Current configuration from the API
@@ -139,21 +139,21 @@ public class DrawingActivity extends AppCompatActivity {
 
         // Get configuration
         AppConfiguration appConfiguration = new AppConfiguration(this);
-        mApiConnection = ApiConnection.apiConnectionFactory(this, appConfiguration.getHostname());
+        mLedApi = LedApi.ledApiFactory(this, appConfiguration.getHostname());
 
         // LED Layouts
-        mLedLayouts[LAYOUT_TOP] = (LinearLayout)findViewById(R.id.led_layout_top);
-        mLedLayouts[LAYOUT_RIGHT] = (LinearLayout)findViewById(R.id.led_layout_right);
-        mLedLayouts[LAYOUT_BOTTOM] = (LinearLayout)findViewById(R.id.led_layout_bottom);
-        mLedLayouts[LAYOUT_LEFT] = (LinearLayout)findViewById(R.id.led_layout_left);
+        mLedLayouts[LAYOUT_TOP] = (LinearLayout) findViewById(R.id.led_layout_top);
+        mLedLayouts[LAYOUT_RIGHT] = (LinearLayout) findViewById(R.id.led_layout_right);
+        mLedLayouts[LAYOUT_BOTTOM] = (LinearLayout) findViewById(R.id.led_layout_bottom);
+        mLedLayouts[LAYOUT_LEFT] = (LinearLayout) findViewById(R.id.led_layout_left);
 
         // Color Preview
         mColorPreview = findViewById(R.id.color_preview);
-        mColorPreview.setBackgroundColor(Color.argb(255,255,255,255));
+        mColorPreview.setBackgroundColor(Color.argb(255, 255, 255, 255));
         mColorPreview.bringToFront();
 
         // MOSFET Temperature Output
-        mMosfetTemperature = (TextView)findViewById(R.id.mosfet_temperature);
+        mMosfetTemperature = (TextView) findViewById(R.id.mosfet_temperature);
 
         // Setup Button
         findViewById(R.id.button_setup).setOnClickListener(new View.OnClickListener() {
@@ -166,20 +166,20 @@ public class DrawingActivity extends AppCompatActivity {
         });
 
         // SeekBars
-        mSeekbars[RED] = (SeekBar)findViewById(R.id.red_channel_seekbar);
-        mSeekbars[GREEN] = (SeekBar)findViewById(R.id.blue_channel_seekbar);
-        mSeekbars[BLUE] = (SeekBar)findViewById(R.id.green_channel_seekbar);
-        mSeekbars[BRIGHTNESS] = (SeekBar)findViewById(R.id.brightness_seekbar);
-        for(int i = 0 ; i < 4 ; i++) {
+        mSeekbars[RED] = (SeekBar) findViewById(R.id.red_channel_seekbar);
+        mSeekbars[GREEN] = (SeekBar) findViewById(R.id.blue_channel_seekbar);
+        mSeekbars[BLUE] = (SeekBar) findViewById(R.id.green_channel_seekbar);
+        mSeekbars[BRIGHTNESS] = (SeekBar) findViewById(R.id.brightness_seekbar);
+        for (int i = 0; i < 4; i++) {
             mSeekbars[i].setOnSeekBarChangeListener(mSeekBarChangeListener);
         }
 
         // Power Switch
-        mPowerSwitch = (Switch)findViewById(R.id.power_switch);
+        mPowerSwitch = (Switch) findViewById(R.id.power_switch);
         mPowerSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mApiConnection.sendPowerUpdate(mPowerSwitch.isChecked());
+                mLedApi.sendPowerUpdate(mPowerSwitch.isChecked());
             }
         });
 
@@ -200,22 +200,22 @@ public class DrawingActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if(mConfiguration == null) {
+        if (mConfiguration == null) {
             // No configuration, fetch it from the API
-            mApiConnection.fetchConfiguration(mFetchConfigurationListener);
+            mLedApi.fetchConfiguration(mFetchConfigurationListener);
         }
-        if(mSystemStatusWorker == null) {
-            mSystemStatusWorker = new SystemStatusWorker(mApiConnection, mSystemStatusUpdateListener);
+        if (mSystemStatusWorker == null) {
+            mSystemStatusWorker = new SystemStatusWorker(mLedApi, mSystemStatusUpdateListener);
         }
         mSystemStatusWorker.start();
     }
 
     @Override
     public void onPause() {
-        if(mAlertDialog != null) {
+        if (mAlertDialog != null) {
             mAlertDialog.dismiss();
         }
-        if(mSystemStatusWorker != null) {
+        if (mSystemStatusWorker != null) {
             mSystemStatusWorker.stop();
         }
         super.onPause();
@@ -225,7 +225,7 @@ public class DrawingActivity extends AppCompatActivity {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             // Determine which seekbar was updated
-            switch(seekBar.getId()) {
+            switch (seekBar.getId()) {
                 case R.id.red_channel_seekbar:
                     mColor[RED] = progress;
                     break;
@@ -245,25 +245,28 @@ public class DrawingActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {}
+        public void onStartTrackingTouch(SeekBar seekBar) {
+        }
 
         @Override
-        public void onStopTrackingTouch(SeekBar seekBar) {}
+        public void onStopTrackingTouch(SeekBar seekBar) {
+        }
     };
 
     /**
      * Rescale brightness (5-bit) -> 8-bit alpha
+     *
      * @param brightness 5-bit brightness
      * @return 8-bit alpha
      */
     private int scaleBrightness(int brightness) {
-        return (int)(brightness / 31.0 * 255.0);
+        return (int) (brightness / 31.0 * 255.0);
     }
 
     /**
      * Configuration fetching listener
      */
-    private ApiConnection.FetchConfigurationListener mFetchConfigurationListener = new ApiConnection.FetchConfigurationListener() {
+    private LedApi.FetchConfigurationListener mFetchConfigurationListener = new LedApi.FetchConfigurationListener() {
         @Override
         public void onConfigurationFetched(@NonNull Configuration configuration) {
             mConfiguration = configuration;
@@ -279,7 +282,7 @@ public class DrawingActivity extends AppCompatActivity {
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            mApiConnection.fetchConfiguration(mFetchConfigurationListener);
+                            mLedApi.fetchConfiguration(mFetchConfigurationListener);
                         }
                     })
                     .setNegativeButton(android.R.string.cancel, null)
@@ -294,13 +297,16 @@ public class DrawingActivity extends AppCompatActivity {
     private SystemStatusWorker.SystemStatusUpdateListener mSystemStatusUpdateListener = new SystemStatusWorker.SystemStatusUpdateListener() {
         @Override
         public void onSystemStatusUpdated(@NonNull SystemStatus systemStatus) {
-            if(systemStatus.powerState != mPowerSwitch.isChecked()) {
+            if (systemStatus.powerState != mPowerSwitch.isChecked()) {
                 mPowerSwitch.setChecked(systemStatus.powerState);
             }
             mMosfetTemperature.setText(getString(R.string.degrees_celsius, systemStatus.mosfetTemperature));
         }
     };
 
+    /**
+     * Update color SeekBars to startup colors
+     */
     private void updateSeekbars() {
         mSeekbars[RED].setProgress(mConfiguration.startupRed);
         mSeekbars[GREEN].setProgress(mConfiguration.startupGreen);
@@ -308,6 +314,9 @@ public class DrawingActivity extends AppCompatActivity {
         mSeekbars[BRIGHTNESS].setProgress(mConfiguration.startupBrightness);
     }
 
+    /**
+     * Update LED views and state variables
+     */
     private void updateLedSetup() {
         Configuration configuration = mConfiguration;
         // Create new LED views with startup colors and brightness
@@ -316,32 +325,32 @@ public class DrawingActivity extends AppCompatActivity {
         mLedViews = new View[mLedCount];
         int alpha = scaleBrightness(configuration.startupBrightness);
         int color = Color.argb(alpha, configuration.startupRed, configuration.startupGreen, configuration.startupBlue);
-        for(int i = 0 ; i < mLedCount ; i++) {
+        for (int i = 0; i < mLedCount; i++) {
             mLeds[i] = new Led(i, configuration.startupBrightness, configuration.startupRed, configuration.startupGreen, configuration.startupBlue);
             mLedViews[i] = new View(DrawingActivity.this);
             mLedViews[i].setBackgroundColor(color);
         }
         // Clear any existing LED Views
-        for(int i = 0 ; i < LED_STRIPS ; i++) {
+        for (int i = 0; i < LED_STRIPS; i++) {
             mLedLayouts[i].removeAllViews();
         }
 
         // Draw views for each strip - hardware dependent
-        int stripLengths[] = { configuration.topLedCount, configuration.rightLedCount, configuration.bottomLedCount, configuration.leftLedCount };
+        int stripLengths[] = {configuration.topLedCount, configuration.rightLedCount, configuration.bottomLedCount, configuration.leftLedCount};
         int j = 0;
         int end = 0;
-        for(int i = 0 ; i < mLedLayouts.length ; i++) {
+        for (int i = 0; i < mLedLayouts.length; i++) {
             // Create LayoutParams for vertical vs. horizontal
             int width = ViewGroup.LayoutParams.MATCH_PARENT;
             int height = ViewGroup.LayoutParams.MATCH_PARENT;
-            if(i % 2 == 0) {
+            if (i % 2 == 0) {
                 width = mLedLayouts[i].getWidth() / max(stripLengths[i], 1);
             } else {
                 height = mLedLayouts[i].getHeight() / max(stripLengths[i], 1);
             }
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, height);
             end = end + stripLengths[i];
-            for( ; j < end ; j++) {
+            for (; j < end; j++) {
                 mLedViews[j].setLayoutParams(params);
                 mLedLayouts[i].addView(mLedViews[j]);
             }
@@ -365,7 +374,7 @@ public class DrawingActivity extends AppCompatActivity {
     private void buildLedRects() {
         mLedRects = new Rect[mLedCount];
         View v;
-        for(int i = 0 ; i < mLedCount ; i++) {
+        for (int i = 0; i < mLedCount; i++) {
             v = mLedViews[i];
             mLedRects[i] = new Rect(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
         }
@@ -379,26 +388,26 @@ public class DrawingActivity extends AppCompatActivity {
     private View.OnTouchListener mOnTouchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            if (mDeadzone.contains((int)event.getX(), (int)event.getY())
+            if (mDeadzone.contains((int) event.getX(), (int) event.getY())
                     || mLedRects == null) {
                 return true;
             }
             // Touch is inside one of the LED areas
             int ledIndex = -1;
-            for(int i = 0 ; i < mLedCount ; i++) {
-                if(mLedRects[i].contains((int)event.getX(), (int)event.getY())) {
+            for (int i = 0; i < mLedCount; i++) {
+                if (mLedRects[i].contains((int) event.getX(), (int) event.getY())) {
                     ledIndex = i;
                     break;
                 }
             }
-            if(ledIndex > -1) {
+            if (ledIndex > -1) {
                 mLedViews[ledIndex].setBackgroundColor(mArgbColor);
                 Led target = mLeds[ledIndex];
                 target.red = mColor[RED];
                 target.green = mColor[GREEN];
                 target.blue = mColor[BLUE];
                 target.brightness = mColor[BRIGHTNESS];
-                mApiConnection.sendLedUpdate(target);
+                mLedApi.sendLedUpdate(target);
             }
             return true;
         }
