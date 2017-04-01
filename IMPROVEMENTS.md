@@ -10,3 +10,5 @@
 - Improve touch detection in Android app - determine which strip the user is touching then determine which LED using only that strip's views
 - Unit Tests
 - Integration Tests
+- Circuit with more SMD components instead of through-hole
+- Possibly relay to control LED strip power supply

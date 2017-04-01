@@ -14,6 +14,7 @@
 - Order circuit board & SMD parts
 
 # In Progress
+- Some refactors
 
 # Blocked
 - Hardware - Build NAS - possible faulty RAM
