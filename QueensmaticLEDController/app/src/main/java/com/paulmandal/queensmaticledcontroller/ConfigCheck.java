@@ -15,7 +15,6 @@ import com.paulmandal.queensmaticledcontroller.data.AppConfiguration;
  * Initial check for the presence of hostname - if no hostname is found redirect to the settings
  * activity
  */
-
 public class ConfigCheck  extends AppCompatActivity {
 
     /**

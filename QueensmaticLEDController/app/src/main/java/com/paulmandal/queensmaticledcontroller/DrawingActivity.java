@@ -25,7 +25,6 @@ import static java.lang.Math.max;
 /**
  * Drawing activity - update LEDs via touch
  */
-
 public class DrawingActivity extends AppCompatActivity {
 
     /**

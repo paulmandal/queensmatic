@@ -3,7 +3,6 @@ package com.paulmandal.queensmaticledcontroller.data;
 /**
  * Container for the LED controller system configuration
  */
-
 public class Configuration {
 
     /**

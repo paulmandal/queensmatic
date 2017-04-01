@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 /**
  * Application-level configuration
  */
-
 public class AppConfiguration {
 
     /**

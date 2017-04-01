@@ -18,7 +18,6 @@ import com.paulmandal.queensmaticledcontroller.data.Configuration;
 /**
  * Config activity - update API and app configuration
  */
-
 public class ConfigActivity extends AppCompatActivity {
 
     /**

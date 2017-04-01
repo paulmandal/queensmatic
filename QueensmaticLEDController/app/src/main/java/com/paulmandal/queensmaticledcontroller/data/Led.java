@@ -3,7 +3,6 @@ package com.paulmandal.queensmaticledcontroller.data;
 /**
  * State for an LED
  */
-
 public class Led {
 
     /**
