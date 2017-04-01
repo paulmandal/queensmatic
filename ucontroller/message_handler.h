@@ -6,6 +6,7 @@
 
 #include "Arduino.h"
 #include "led_controller.h"
+#include "hardware_controller.h"
 
 // Message buffer size
 extern const int MSG_BUFFER_SIZE;
@@ -14,7 +15,7 @@ class MessageHandler
 {
   public:
     MessageHandler();
-    void begin(LedController ledController);
+    void begin(LedController ledController, HardwareController hardwareController);
     void checkMessages();
   private:
     // Message buffer
@@ -23,6 +24,7 @@ class MessageHandler
     char _readByte;
     int _bufferPos;
     LedController *_ledController;
+    HardwareController *_hardwareController;
     void _reallocateMemory();
     boolean _processCommand(char *command, int commandLength);
     void _sendStatusUpdate();

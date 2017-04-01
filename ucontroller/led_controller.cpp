@@ -6,21 +6,13 @@
 #include <SPI.h>
 
 // Constants
-const long DEVICE_CLOCK_SPEED = 16000000L;
 const int DEFAULT_LED_COUNT = 180;
 const int LED_UPDATE_VALUE_COUNT = 5;
-const float ADC_STEPS_TO_CV = (5.0/*V*/ / 1024.0/*steps*/) * 100.0/*cV/V*/;
-const int TEMPERATURE_PIN = 21;
-const int MAX_MOSFET_TEMP = 40;
-const int POWER_PIN = 10;
 
 LedController::LedController(int ledCount) {
   currentLedCount = ledCount;  
-  powerOn = false;
   _reallocateMemory();
   SPI.begin();
-  pinMode(POWER_PIN, OUTPUT);
-  pinMode(TEMPERATURE_PIN, INPUT);
 }
 
 /**
@@ -38,11 +30,8 @@ void LedController::updateLedCount(int ledCount) {
   boolean reallocate = currentLedCount != ledCount;
   if(reallocate) {
     currentLedCount = ledCount;
-    currentTemp = 0.0;
-    _restorePowerState = false;
     _reallocateMemory();
     _updateLeds();
-    _updatePower();
   }
 }
 
@@ -68,44 +57,6 @@ boolean LedController::updateLed(int ledNumber, int red, int green, int blue, in
     led->brightness = brightness;
   }
   return needsUpdate;
-}
-
-/**
- * Update Power state
- */
-void LedController::updatePower(boolean powerState) {  
-  powerOn = powerState;
-  _updatePower();
-}
-
-/**
- * Reads the temperature from the temperature pin
- */
- void LedController::updateTemp() {
-  currentTemp = analogRead(TEMPERATURE_PIN) * ADC_STEPS_TO_CV - 273.15; // steps->cV, 1cV/K, Kelvin->Celsius
- }
-
-/**
- * Checks whether the temperature is at an acceptable level
- */
-void LedController::checkTemp() {
-  if(currentTemp > MAX_MOSFET_TEMP) {
-    digitalWrite(POWER_PIN, LOW);
-    _restorePowerState = true;
-  } else if(_restorePowerState) {
-    _restorePowerState = false;
-    digitalWrite(POWER_PIN, powerOn);
-  }
-}
-
-/**
- * Update Power Pin
- */
-void LedController::_updatePower() {
-  digitalWrite(POWER_PIN, powerOn);
-  if(powerOn) {
-    delay(50);
-  }
 }
 
 /**

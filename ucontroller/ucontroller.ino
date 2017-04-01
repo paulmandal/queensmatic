@@ -12,6 +12,9 @@
 // LED Controller
 LedController ledController(DEFAULT_LED_COUNT);
 
+// Hardware Controller - Power & Temperature
+HardwareController hardwareController;
+
 // Message Handler
 MessageHandler messageHandler;
 
@@ -19,7 +22,7 @@ MessageHandler messageHandler;
  * Init code
  */
 void setup() {
-  messageHandler.begin(ledController);
+  messageHandler.begin(ledController, hardwareController);
 }
 
 /**
@@ -27,8 +30,8 @@ void setup() {
  */
 void loop() {
   messageHandler.checkMessages();
-  ledController.updateTemp();
-  ledController.checkTemp();
+  hardwareController.updateTemp();
+  hardwareController.checkTemp();
   delay(100); // TODO: adjust delay time for smooth updates / add some delay logic?
 }
 

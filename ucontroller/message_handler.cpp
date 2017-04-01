@@ -10,9 +10,10 @@ const int MSG_BUFFER_SIZE = 64;
 // Constructor, empty
 MessageHandler::MessageHandler() {}
 
-void MessageHandler::begin(LedController ledController) {
+void MessageHandler::begin(LedController ledController, HardwareController hardwareController) {
   _bufferPos = 0;
   _ledController = &ledController;
+  _hardwareController = &hardwareController;
   _reallocateMemory(); 
 }
 
@@ -54,7 +55,8 @@ boolean MessageHandler::_processCommand(char *command, int commandLength) {
       seperator++;      
       int ledCount = atoi(seperator);
       if(ledCount > 0) {
-        //_ledController.updateLedCount(ledCount); FIXME
+        _ledController->updateLedCount(ledCount);
+        _hardwareController->updatePower(_hardwareController->powerOn);
       }
     }
   } else if(command[0] == 'U') {
@@ -74,7 +76,7 @@ boolean MessageHandler::_processCommand(char *command, int commandLength) {
       }
       if(readValues == LED_UPDATE_VALUE_COUNT) {
         // Update LED if enough values were read
-        //return _ledController.updateLed(values[0], values[1], values[2], values[3], values[4]); FIXME
+        return _ledController->updateLed(values[0], values[1], values[2], values[3], values[4]);
       }
     }
   } else if(command[0] == 'P') {
@@ -84,7 +86,7 @@ boolean MessageHandler::_processCommand(char *command, int commandLength) {
       seperator++;      
       int powerState = atoi(seperator);
       boolean powerOn = powerState == 1 ? true : false;
-      //_ledController.updatePower(); FIXME
+      _hardwareController->updatePower(powerOn);
     }
   } else if(command[0] == 'R') {
     _sendStatusUpdate();
@@ -100,9 +102,9 @@ boolean MessageHandler::_processCommand(char *command, int commandLength) {
  */
  void MessageHandler::_sendStatusUpdate() {
   Serial.print("P:");
-  Serial.print(_ledController->powerOn);
+  Serial.print(_hardwareController->powerOn);
   Serial.print(",T:");
-  Serial.println(_ledController->currentTemp);
+  Serial.println(_hardwareController->currentTemp);
  }
 
 /**
