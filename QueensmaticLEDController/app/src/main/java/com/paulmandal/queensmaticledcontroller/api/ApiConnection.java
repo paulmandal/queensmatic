@@ -103,6 +103,7 @@ public class ApiConnection {
                     FetchConfigurationListener mListener = listener;
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
                         mListener.onConfigurationFetchError();
                     }
                 });
@@ -161,6 +162,7 @@ public class ApiConnection {
                     FetchSystemStatusListener mListener = listener;
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
                         mListener.onSystemStatusFetchError();
                     }
                 });
