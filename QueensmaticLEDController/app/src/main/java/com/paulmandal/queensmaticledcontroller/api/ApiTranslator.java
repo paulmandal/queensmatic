@@ -96,7 +96,7 @@ public class ApiTranslator {
             JSONObject json = new JSONObject();
 
             // Native->JSON
-            json.put("power_state", systemStatus.powerState);
+            json.put("powerState", systemStatus.powerState);
 
             return json;
         } catch(JSONException e) {

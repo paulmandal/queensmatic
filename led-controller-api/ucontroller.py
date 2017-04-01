@@ -10,9 +10,10 @@ import serial
 import time
 import re
 
-serialPort = serial.Serial(USB_SERIAL, 115200)
+serial_port = serial.Serial(USB_SERIAL, 115200)
 lock = Lock()
-statusPattern = re.compile("P:(?P<power_state>[0-9]+),T:(?P<mosfet_temperature>[.0-9]+)")
+status_pattern = re.compile("P:(?P<power_state>[0-9]+),T:(?P<mosfet_temperature>[.0-9]+)")
+
 
 def set_config(config, startup=False):
     led_count = config['topLedCount'] + config['rightLedCount'] + config['bottomLedCount'] + config['leftLedCount']
@@ -34,10 +35,10 @@ def update_led(led_number, red, green, blue, brightness):
 def get_status():
     send('R')
     time.sleep(0.01)
-    statusLine = serialPort.readline()
-    matcher = statusPattern.match(statusLine)
+    status_line = serial_port.readline()
+    matcher = status_pattern.match(status_line)
     return {
-        'powerState': matcher.group('power_state') == 1,
+        'powerState': bool(matcher.group('power_state')),
         'mosfetTemperature': float(matcher.group('mosfet_temperature'))
     }
 
@@ -50,6 +51,6 @@ def update_power(power_state):
 
 def send(command):
     with lock:
-        serialPort.write(command.encode())
-        serialPort.write(b'\n')
+        serial_port.write(command.encode())
+        serial_port.write(b'\n')
     return
