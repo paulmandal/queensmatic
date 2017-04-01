@@ -179,7 +179,7 @@ public class DrawingActivity extends AppCompatActivity {
         mPowerSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: power switch
+                mApiConnection.sendPowerUpdate(mPowerSwitch.isChecked());
             }
         });
 

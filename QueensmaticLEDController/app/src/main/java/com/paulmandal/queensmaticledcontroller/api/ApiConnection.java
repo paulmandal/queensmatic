@@ -169,6 +169,26 @@ public class ApiConnection {
         addRequest(request);
     }
 
+    /**
+     * Sends a Power State update to the LED API
+     *
+     * @param powerState New power state for the LED strips
+     */
+    public void sendPowerUpdate(boolean powerState) {
+        JSONObject json = ApiTranslator.jsonObjectFromSystemStatus(new SystemStatus(powerState, 0.0f));
+        if(json != null) {
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, mHostname + STATUS_ENDPOINT, json, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) { /* Do nothing */ }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    error.printStackTrace();
+                }
+            });
+            addRequest(request);
+        }
+    }
 
     /**
      * Sends an LED Update to the API - these are sent blind (no callback) because the user

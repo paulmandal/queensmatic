@@ -85,6 +85,27 @@ public class ApiTranslator {
     }
 
     /**
+     * Creates a JSONObject representation of a System Status
+     *
+     * @param systemStatus System Status to translate to JSON
+     * @return JSONObject representation of the System Status, or null if there was an error
+     */
+    @Nullable
+    public static JSONObject jsonObjectFromSystemStatus(SystemStatus systemStatus) {
+        try {
+            JSONObject json = new JSONObject();
+
+            // Native->JSON
+            json.put("power_state", systemStatus.powerState);
+
+            return json;
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
      * Creates a JSONObject representation of an LED state
      * @param led The LED to translate to JSON
      * @return JSONObject representation of the supplied LED, or null if there was an error
