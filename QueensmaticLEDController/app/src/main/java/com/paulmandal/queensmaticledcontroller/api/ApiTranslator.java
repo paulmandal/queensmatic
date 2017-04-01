@@ -9,6 +9,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.paulmandal.queensmaticledcontroller.data.Configuration;
 import com.paulmandal.queensmaticledcontroller.data.Led;
+import com.paulmandal.queensmaticledcontroller.data.SystemStatus;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,7 +17,6 @@ import org.json.JSONObject;
 /**
  * Converts API objects, JSON<->Native
  */
-
 public class ApiTranslator {
 
     /**
@@ -36,11 +36,8 @@ public class ApiTranslator {
             int startupGreen = json.getInt("startupGreen");
             int startupBlue = json.getInt("startupBlue");
 
-            Configuration configuration = new Configuration(topLedCount,
-                    rightLedCount, bottomLedCount, leftLedCount, startupBrightness,
-                    startupRed, startupGreen, startupBlue);
-            
-            return configuration;
+            return new Configuration(topLedCount, rightLedCount, bottomLedCount, leftLedCount,
+                    startupBrightness, startupRed, startupGreen, startupBlue);
         } catch(JSONException e) {
             e.printStackTrace();
         }
@@ -69,6 +66,24 @@ public class ApiTranslator {
 
             return json;
         } catch(JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Creates a SystemStatus from a JSON object
+     * @param json JSONObject containing SystemStatus data
+     * @return SystemStatus object representation of supplied JSON, or null if there was a parsing error
+     */
+    @Nullable
+    public static SystemStatus systemStatusFromJson(JSONObject json) {
+        try {
+            boolean powerState = json.getBoolean("powerState");
+            float mosfetTemperature = json.getLong("mosfetTemperature");
+
+            return new SystemStatus(powerState, mosfetTemperature);
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         return null;

@@ -2,7 +2,6 @@ package com.paulmandal.queensmaticledcontroller.api;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.android.volley.Cache;
 import com.android.volley.Network;
@@ -16,20 +15,20 @@ import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.paulmandal.queensmaticledcontroller.data.Configuration;
 import com.paulmandal.queensmaticledcontroller.data.Led;
+import com.paulmandal.queensmaticledcontroller.data.SystemStatus;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
  * Handles communication with the API
  */
-
 public class ApiConnection {
 
     /**
      * API Endpoints
      */
     private static final String CONFIGURATION_ENDPOINT = "/configuration";
+    private static final String STATUS_ENDPOINT = "/status";
     private static final String LED_UPDATE_ENDPOINT = "/leds";
 
     /**
@@ -38,6 +37,14 @@ public class ApiConnection {
     public interface FetchConfigurationListener {
         void onConfigurationFetched(@NonNull Configuration configuration);
         void onConfigurationFetchError();
+    }
+
+    /**
+     * Callback for fetching the system status
+     */
+    public interface FetchSystemStatusListener {
+        void onSystemStatusFetched(@NonNull SystemStatus systemStatus);
+        void onSystemStatusFetchError();
     }
 
     /**
@@ -131,6 +138,35 @@ public class ApiConnection {
             listener.onConfigurationStoreError();
         }
     }
+
+    /**
+     * Fetches the system status from the API
+     *
+     * @param listener Callback after async fetch
+     */
+    public void fetchSystemStatus(final FetchSystemStatusListener listener) {
+        JsonObjectRequest request = new JsonObjectRequest
+                (Request.Method.GET, mHostname + STATUS_ENDPOINT, null, new Response.Listener<JSONObject>() {
+                    FetchSystemStatusListener mListener = listener;
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        SystemStatus systemStatus = ApiTranslator.systemStatusFromJson(response);
+                        if(systemStatus != null) {
+                            mListener.onSystemStatusFetched(systemStatus);
+                        } else {
+                            mListener.onSystemStatusFetchError();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    FetchSystemStatusListener mListener = listener;
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        mListener.onSystemStatusFetchError();
+                    }
+                });
+        addRequest(request);
+    }
+
 
     /**
      * Sends an LED Update to the API - these are sent blind (no callback) because the user
