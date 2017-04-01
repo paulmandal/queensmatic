@@ -14,11 +14,15 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.Switch;
+import android.widget.TextView;
 
 import com.paulmandal.queensmaticledcontroller.api.ApiConnection;
 import com.paulmandal.queensmaticledcontroller.data.AppConfiguration;
 import com.paulmandal.queensmaticledcontroller.data.Configuration;
 import com.paulmandal.queensmaticledcontroller.data.Led;
+import com.paulmandal.queensmaticledcontroller.data.SystemStatus;
+import com.paulmandal.queensmaticledcontroller.workers.SystemStatusWorker;
 
 import static java.lang.Math.max;
 
@@ -51,17 +55,22 @@ public class DrawingActivity extends AppCompatActivity {
     /**
      * Reference to the API connection
      */
-    ApiConnection mApiConnection;
+    private ApiConnection mApiConnection;
 
     /**
      * Current configuration from the API
      */
-    Configuration mConfiguration;
+    private Configuration mConfiguration;
+
+    /**
+     * System Status update worker
+     */
+    private SystemStatusWorker mSystemStatusWorker;
 
     /**
      * The LEDs being controlled by this screen
      */
-    Led[] mLeds;
+    private Led[] mLeds;
 
     /**
      * Current LED count
@@ -81,22 +90,32 @@ public class DrawingActivity extends AppCompatActivity {
     /**
      * The Views representing LEDs
      */
-    View[] mLedViews;
+    private View[] mLedViews;
 
     /**
      * Rectangles for each LED view - for touch detection
      */
-    Rect[] mLedRects;
+    private Rect[] mLedRects;
 
     /**
      * Rect for areas that don't contain LEDs
      */
-    Rect mDeadzone;
+    private Rect mDeadzone;
 
     /**
      * The View for the Color Preview
      */
     private View mColorPreview;
+
+    /**
+     * The View for the MOSFET temperature output
+     */
+    private TextView mMosfetTemperature;
+
+    /**
+     * The Power Switch
+     */
+    private Switch mPowerSwitch;
 
     /**
      * Layouts the LED views go into - top, right, bottom, left
@@ -133,6 +152,9 @@ public class DrawingActivity extends AppCompatActivity {
         mColorPreview.setBackgroundColor(Color.argb(255,255,255,255));
         mColorPreview.bringToFront();
 
+        // MOSFET Temperature Output
+        mMosfetTemperature = (TextView)findViewById(R.id.mosfet_temperature);
+
         // Setup Button
         findViewById(R.id.button_setup).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,7 +175,8 @@ public class DrawingActivity extends AppCompatActivity {
         }
 
         // Power Switch
-        findViewById(R.id.power_switch).setOnClickListener(new View.OnClickListener() {
+        mPowerSwitch = (Switch)findViewById(R.id.power_switch);
+        mPowerSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO: power switch
@@ -181,12 +204,19 @@ public class DrawingActivity extends AppCompatActivity {
             // No configuration, fetch it from the API
             mApiConnection.fetchConfiguration(mFetchConfigurationListener);
         }
+        if(mSystemStatusWorker == null) {
+            mSystemStatusWorker = new SystemStatusWorker(mApiConnection, mSystemStatusUpdateListener);
+        }
+        mSystemStatusWorker.start();
     }
 
     @Override
     public void onPause() {
         if(mAlertDialog != null) {
             mAlertDialog.dismiss();
+        }
+        if(mSystemStatusWorker != null) {
+            mSystemStatusWorker.stop();
         }
         super.onPause();
     }
@@ -230,6 +260,9 @@ public class DrawingActivity extends AppCompatActivity {
         return (int)(brightness / 31.0 * 255.0);
     }
 
+    /**
+     * Configuration fetching listener
+     */
     private ApiConnection.FetchConfigurationListener mFetchConfigurationListener = new ApiConnection.FetchConfigurationListener() {
         @Override
         public void onConfigurationFetched(@NonNull Configuration configuration) {
@@ -252,6 +285,19 @@ public class DrawingActivity extends AppCompatActivity {
                     .setNegativeButton(android.R.string.cancel, null)
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
+        }
+    };
+
+    /**
+     * System Status update listener
+     */
+    private SystemStatusWorker.SystemStatusUpdateListener mSystemStatusUpdateListener = new SystemStatusWorker.SystemStatusUpdateListener() {
+        @Override
+        public void onSystemStatusUpdated(@NonNull SystemStatus systemStatus) {
+            if(systemStatus.powerState != mPowerSwitch.isChecked()) {
+                mPowerSwitch.setChecked(systemStatus.powerState);
+            }
+            mMosfetTemperature.setText(getString(R.string.degrees_celsius, systemStatus.mosfetTemperature));
         }
     };
 

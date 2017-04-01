@@ -1,12 +1,7 @@
 package com.paulmandal.queensmaticledcontroller.api;
 
 import android.support.annotation.Nullable;
-import android.util.Log;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.paulmandal.queensmaticledcontroller.data.Configuration;
 import com.paulmandal.queensmaticledcontroller.data.Led;
 import com.paulmandal.queensmaticledcontroller.data.SystemStatus;
@@ -80,7 +75,7 @@ public class ApiTranslator {
     public static SystemStatus systemStatusFromJson(JSONObject json) {
         try {
             boolean powerState = json.getBoolean("powerState");
-            float mosfetTemperature = json.getLong("mosfetTemperature");
+            float mosfetTemperature = (float)json.getDouble("mosfetTemperature");
 
             return new SystemStatus(powerState, mosfetTemperature);
         } catch (JSONException e) {

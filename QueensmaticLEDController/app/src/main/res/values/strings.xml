@@ -22,4 +22,5 @@
     <string name="error_fetching_configuration">Error fetching configuration from API.</string>
     <string name="power_switch">Power</string>
     <string name="button_setup">Setup</string>
+    <string name="degrees_celsius">%1$.2f°C</string>
 </resources>
