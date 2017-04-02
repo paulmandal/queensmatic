@@ -171,14 +171,14 @@ public class ConfigActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             // Package API settings and send them to the API
-            int topLedCount = Integer.parseInt(mTopLedCount.getText().toString());
-            int rightLedCount = Integer.parseInt(mRightLedCount.getText().toString());
-            int bottomLedCount = Integer.parseInt(mBottomLedCount.getText().toString());
-            int leftLedCount = Integer.parseInt(mLeftLedCount.getText().toString());
-            int startupBrightness = Integer.parseInt(mStartupBrightness.getText().toString());
-            int startupRed = Integer.parseInt(mStartupRed.getText().toString());
-            int startupGreen = Integer.parseInt(mStartupGreen.getText().toString());
-            int startupBlue = Integer.parseInt(mStartupBlue.getText().toString());
+            int topLedCount = parseIntHelper(mTopLedCount.getText().toString());
+            int rightLedCount = parseIntHelper(mRightLedCount.getText().toString());
+            int bottomLedCount = parseIntHelper(mBottomLedCount.getText().toString());
+            int leftLedCount = parseIntHelper(mLeftLedCount.getText().toString());
+            int startupBrightness = parseIntHelper(mStartupBrightness.getText().toString());
+            int startupRed = parseIntHelper(mStartupRed.getText().toString());
+            int startupGreen = parseIntHelper(mStartupGreen.getText().toString());
+            int startupBlue = parseIntHelper(mStartupBlue.getText().toString());
 
             Configuration configuration = new Configuration(topLedCount, rightLedCount,
                     bottomLedCount, leftLedCount, startupBrightness, startupRed,
@@ -191,6 +191,18 @@ public class ConfigActivity extends AppCompatActivity {
             }
         }
     };
+
+    /**
+     * Helper for Integer.parseInt(String)
+     */
+    private int parseIntHelper(String s) {
+        try {
+            return Integer.parseInt(s);
+        } catch(NumberFormatException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 
     /**
      * Update the EditTexts on this screen with configuration from the API
