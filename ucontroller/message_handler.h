@@ -27,6 +27,10 @@ class MessageHandler
     HardwareController *_hardwareController;
     void _reallocateMemory();
     boolean _processCommand(char *command, int commandLength);
+    void _processConfigurationUpdate(char *command);
+    void _processLedUpdate(char *command);
+    void _processPowerUpdate(char *command);
+    int _extractInt(char *command);
     void _sendStatusUpdate();
     void _outputLedState(int count);
 };

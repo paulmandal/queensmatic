@@ -21,7 +21,8 @@ void HardwareController::begin() {
   currentTemp = 0.0;
   _restorePowerState = false;
   pinMode(POWER_PIN, OUTPUT);
-  pinMode(TEMPERATURE_PIN, INPUT);  
+  pinMode(TEMPERATURE_PIN, INPUT);
+  digitalWrite(POWER_PIN, powerOn); 
 }
 
 /**

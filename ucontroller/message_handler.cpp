@@ -46,49 +46,11 @@ void MessageHandler::_reallocateMemory() {
  */
 boolean MessageHandler::_processCommand(char *command, int commandLength) {
   if(command[0] == 'C') {
-    // Configuration update
-    char *seperator = strchr(command, ':');
-    // Extract LED count from string
-    if(seperator != NULL) {
-      seperator++;      
-      int ledCount = atoi(seperator);
-      if(ledCount > 0) {
-        _ledController->updateLedCount(ledCount);
-        _hardwareController->updatePower(_hardwareController->powerOn);
-      }
-    }
+    _processConfigurationUpdate(command);
   } else if(command[0] == 'U') {
-    // LED update
-    char *valuesStr = strchr(command, ':');
-    // Extract individual values from string
-    if(valuesStr != NULL) {
-      int values[LED_UPDATE_VALUE_COUNT];
-      int readValues = 0;
-      valuesStr++;
-      char *valueStr = strtok(valuesStr, ",");
-      while(valueStr != NULL && readValues < LED_UPDATE_VALUE_COUNT) {
-        int value = atoi(valueStr);
-        values[readValues] = value;
-        readValues++;
-        valueStr = strtok(NULL, ",");
-      }
-      if(readValues == LED_UPDATE_VALUE_COUNT) {
-        // Update LED if enough values were read
-        _ledController->updateLed(values[0], values[1], values[2], values[3], values[4]);
-      }
-    }
+    _processLedUpdate(command);
   } else if(command[0] == 'P') {
-    // Power update
-    char *seperator = strchr(command, ':');
-    if(seperator != NULL) {
-      seperator++;      
-      int powerState = atoi(seperator);
-      boolean powerOn = powerState == 1 ? true : false;
-      _hardwareController->updatePower(powerOn);
-      if(powerOn) {
-        _ledController->powerOn();
-      }
-    }
+    _processPowerUpdate(command);
   } else if(command[0] == 'R') {
     _sendStatusUpdate();
   } else if(command[0] == 'S') {
@@ -96,6 +58,65 @@ boolean MessageHandler::_processCommand(char *command, int commandLength) {
     _outputLedState(_ledController->currentLedCount);
   }
   return false;
+}
+
+/**
+ * Process configuration update command
+ */
+void MessageHandler::_processConfigurationUpdate(char *command) {
+  int ledCount = _extractInt(command);
+  if(ledCount > 0) {
+    _ledController->updateLedCount(ledCount);
+    _hardwareController->updatePower(_hardwareController->powerOn);
+  }
+}
+
+/**
+ * Process LED update command
+ */
+void MessageHandler::_processLedUpdate(char *command) {
+  char *valuesStr = strchr(command, ':');
+  // Extract individual values from string
+  if(valuesStr != NULL) {
+    int values[LED_UPDATE_VALUE_COUNT];
+    int readValues = 0;
+    valuesStr++;
+    char *valueStr = strtok(valuesStr, ",");
+    while(valueStr != NULL && readValues < LED_UPDATE_VALUE_COUNT) {
+      int value = atoi(valueStr);
+      values[readValues] = value;
+      readValues++;
+      valueStr = strtok(NULL, ",");
+    }
+    if(readValues == LED_UPDATE_VALUE_COUNT) {
+      // Update LED if enough values were read
+      _ledController->updateLed(values[0], values[1], values[2], values[3], values[4]);
+    }
+  }
+}
+
+/**
+ * Procses power update command
+ */
+void MessageHandler::_processPowerUpdate(char *command) {
+  int powerState = _extractInt(command);
+  boolean powerOn = powerState == 1 ? true : false;
+  _hardwareController->updatePower(powerOn);
+  if(powerOn) {
+     _ledController->powerOn();
+  }  
+}
+
+/**
+ * Extract integer from string with format *:n, returns -1 if nothing found
+ */
+int MessageHandler::_extractInt(char *command) {
+  char *seperator = strchr(command, ':');
+  if(seperator != NULL) {
+    seperator++;
+    return atoi(seperator);
+  }
+  return -1;  
 }
 
 /**
