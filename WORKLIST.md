@@ -2,6 +2,7 @@
 - Update SwaggerHub definition with response object
 
 ## Hardware
+- Hardware - Build NAS - wait for replacements
 - OS Setup
 - Design Case
   - Airflow
@@ -11,12 +12,11 @@
   - Wall mounting
   - Light-bleed blocking?
 - Source screws, dampening grommets, air filters
-- Order circuit board & SMD parts
 
 # In Progress
-- Hardware - Build NAS - possible faulty RAM
 
 # Blocked
+- Waiting for components
 
 # Finished
 - Hardware - Select & order hardware
@@ -47,6 +47,7 @@
 - Hardware - Lay out PCB in Eagle
 - Android App - Hook up power button/switch
 - Some refactors
+- Hardware - Order circuit board & SMD parts
 
 # Icebox
 

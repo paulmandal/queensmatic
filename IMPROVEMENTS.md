@@ -1,12 +1,9 @@
 ## Possible Improvements
 - Design assumes a rectangular LED strip arrangement - something more flexible would be cool, but overkill for now
 - Define initial DB in .sql file instead of Python file
-- Bidirectional communication with the uController
+- Bidirectional communication with the uController for LED state
 - Use Python classes for data received by the API
 - Move JSON->Native (and vice versa) mapping into API-level (led-controller-api.py)
-- Scoping in Arduino code - Arduino has some oddness going on there (don't want to define anything inside the loop())
-- Structs or classes in Arduino for message handling
-- Break Arduino code into smaller files
 - Improve touch detection in Android app - determine which strip the user is touching then determine which LED using only that strip's views
 - Unit Tests
 - Integration Tests
