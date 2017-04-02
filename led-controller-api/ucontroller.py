@@ -38,7 +38,7 @@ def get_status():
     status_line = serial_port.readline()
     matcher = status_pattern.match(status_line)
     return {
-        'powerState': bool(matcher.group('power_state')),
+        'powerState': matcher.group('power_state') == '1',
         'mosfetTemperature': float(matcher.group('mosfet_temperature'))
     }
 

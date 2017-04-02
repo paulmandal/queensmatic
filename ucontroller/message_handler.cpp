@@ -11,7 +11,7 @@ const int MSG_BUFFER_SIZE = 64;
 MessageHandler::MessageHandler() {}
 
 void MessageHandler::begin(LedController *ledController, HardwareController *hardwareController) {
-    _bufferPos = 0;
+  _bufferPos = 0;
   _ledController = ledController;
   _hardwareController = hardwareController;
   _reallocateMemory(); 
