@@ -14,10 +14,9 @@
 - Order circuit board & SMD parts
 
 # In Progress
-- Some refactors
+- Hardware - Build NAS - possible faulty RAM
 
 # Blocked
-- Hardware - Build NAS - possible faulty RAM
 
 # Finished
 - Hardware - Select & order hardware
@@ -47,6 +46,7 @@
 - Hardware - prototype circuit on breadboards - need a SMD soldering iron tip for breakout
 - Hardware - Lay out PCB in Eagle
 - Android App - Hook up power button/switch
+- Some refactors
 
 # Icebox
 
