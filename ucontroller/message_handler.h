@@ -15,7 +15,7 @@ class MessageHandler
 {
   public:
     MessageHandler();
-    void begin(LedController ledController, HardwareController hardwareController);
+    void begin(LedController *ledController, HardwareController *hardwareController);
     void checkMessages();
   private:
     // Message buffer

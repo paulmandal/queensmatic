@@ -10,7 +10,7 @@
 #include "message_handler.h"
 
 // LED Controller
-LedController ledController(DEFAULT_LED_COUNT);
+LedController ledController;
 
 // Hardware Controller - Power & Temperature
 HardwareController hardwareController;
@@ -22,13 +22,16 @@ MessageHandler messageHandler;
  * Init code
  */
 void setup() {
-  messageHandler.begin(ledController, hardwareController);
+  ledController.begin(DEFAULT_LED_COUNT);
+  hardwareController.begin();
+  messageHandler.begin(&ledController, &hardwareController);
+  Serial.begin(115200);
 }
 
 /**
  * Main loop
  */
-void loop() {
+void loop() {  
   messageHandler.checkMessages();
   hardwareController.updateTemp();
   hardwareController.checkTemp();

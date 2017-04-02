@@ -27,9 +27,11 @@ class LedController
     int currentLedCount;
     // LED state
     LED *leds;
-    LedController(int ledCount);
+    LedController();
+    void begin(int ledCount);
+    void powerOn();
     void updateLedCount(int ledCount);
-    boolean updateLed(int ledNumber, int red, int green, int blue, int brightness);
+    void updateLed(int ledNumber, int red, int green, int blue, int brightness);
   private:
     void _updateLeds();
     void _reallocateMemory();

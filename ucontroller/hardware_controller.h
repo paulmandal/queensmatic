@@ -24,12 +24,13 @@ extern const int POWER_PIN;
 class HardwareController
 {
   public:
-    HardwareController();
     // Whether power is currently on
     boolean powerOn;
     // Current temperature in C
     float currentTemp;
-    void updatePower(boolean powerOn);
+    HardwareController();
+    void begin();
+    void updatePower(boolean powerState);
     void updateTemp();
     void checkTemp();
   private:

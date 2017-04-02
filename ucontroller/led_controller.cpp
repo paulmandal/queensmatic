@@ -9,10 +9,21 @@
 const int DEFAULT_LED_COUNT = 180;
 const int LED_UPDATE_VALUE_COUNT = 5;
 
-LedController::LedController(int ledCount) {
+// Constructor, empty
+LedController::LedController() {}
+
+void LedController::begin(int ledCount) {
   currentLedCount = ledCount;  
   _reallocateMemory();
   SPI.begin();
+}
+
+/**
+ * Call when power state changes
+ */
+void LedController::powerOn() {
+  delay(50);
+  _updateLeds();
 }
 
 /**
@@ -38,7 +49,7 @@ void LedController::updateLedCount(int ledCount) {
 /**
  * Update an LED's state
  */
-boolean LedController::updateLed(int ledNumber, int red, int green, int blue, int brightness) {  
+void LedController::updateLed(int ledNumber, int red, int green, int blue, int brightness) {  
   if(ledNumber >= currentLedCount) {
     // LED out of bounds
     return false;
@@ -55,14 +66,14 @@ boolean LedController::updateLed(int ledNumber, int red, int green, int blue, in
     led->green = green;
     led->blue = blue;
     led->brightness = brightness;
+    _updateLeds();
   }
-  return needsUpdate;
 }
 
 /**
  * Send commands to LED hardware to update lights
  */
-void LedController::_updateLeds() {
+void LedController::_updateLeds() {  
   // For APA102C
   int endLength = round(((float)(currentLedCount - 1) / 16.0) + 0.5F);
   endLength = max(endLength, 4);

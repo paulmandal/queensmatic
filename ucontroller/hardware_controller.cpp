@@ -13,12 +13,15 @@ const int TEMPERATURE_PIN = 21;
 const int MAX_MOSFET_TEMP = 40;
 const int POWER_PIN = 10;
 
-HardwareController::HardwareController() {
+// Constructor, empty
+HardwareController::HardwareController() {}
+
+void HardwareController::begin() {
   powerOn = false;
   currentTemp = 0.0;
   _restorePowerState = false;
   pinMode(POWER_PIN, OUTPUT);
-  pinMode(TEMPERATURE_PIN, INPUT);
+  pinMode(TEMPERATURE_PIN, INPUT);  
 }
 
 /**
@@ -26,7 +29,7 @@ HardwareController::HardwareController() {
  */
 void HardwareController::updatePower(boolean powerState) {  
   powerOn = powerState;
-  _updatePower();
+  _updatePower();  
 }
 
 /**
@@ -54,9 +57,6 @@ void HardwareController::checkTemp() {
  */
 void HardwareController::_updatePower() {
   digitalWrite(POWER_PIN, powerOn);
-  if(powerOn) {
-    delay(50);
-  }
 }
 
 
