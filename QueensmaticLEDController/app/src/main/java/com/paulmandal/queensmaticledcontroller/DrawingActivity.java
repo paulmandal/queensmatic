@@ -408,11 +408,13 @@ public class DrawingActivity extends AppCompatActivity {
             if (ledIndex > -1) {
                 mLedViews[ledIndex].setBackgroundColor(mArgbColor);
                 Led target = mLeds[ledIndex];
-                target.red = mColor[RED];
-                target.green = mColor[GREEN];
-                target.blue = mColor[BLUE];
-                target.brightness = mColor[BRIGHTNESS];
-                mLedApi.sendLedUpdate(target);
+                if(!target.equals(mColor[BRIGHTNESS], mColor[RED], mColor[GREEN], mColor[BLUE])) {
+                    target.red = mColor[RED];
+                    target.green = mColor[GREEN];
+                    target.blue = mColor[BLUE];
+                    target.brightness = mColor[BRIGHTNESS];
+                    mLedApi.sendLedUpdate(target);
+                }
             }
             return true;
         }

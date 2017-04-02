@@ -38,4 +38,14 @@ public class Led {
         this.blue = blue;
     }
 
+    /**
+     * Check if this LED is equal to the supplied values
+     */
+    public boolean equals(int brightness, int red, int green, int blue) {
+        return this.brightness == brightness
+                && this.red == red
+                && this.green == green
+                && this.blue == blue;
+    }
+
 }
