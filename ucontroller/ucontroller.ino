@@ -25,7 +25,6 @@ void setup() {
   ledController.begin(DEFAULT_LED_COUNT);
   hardwareController.begin();
   messageHandler.begin(&ledController, &hardwareController);
-  Serial.begin(115200);
 }
 
 /**
