@@ -5,9 +5,6 @@
 #include "hardware_controller.h"
 
 // Constants
-const long DEVICE_CLOCK_SPEED = 16000000L;
-const int DEFAULT_LED_COUNT = 180;
-const int LED_UPDATE_VALUE_COUNT = 5;
 const float ADC_STEPS_TO_CV = (5.0/*V*/ / 1024.0/*steps*/) * 100.0/*cV/V*/;
 const int TEMPERATURE_PIN = 21;
 const int MAX_MOSFET_TEMP = 40;

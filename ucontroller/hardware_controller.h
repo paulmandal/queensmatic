@@ -6,9 +6,6 @@
 
 #include "Arduino.h"
 
-// uController clock speed
-extern const long DEVICE_CLOCK_SPEED;
-
 // 10-bit ADC, measuring 0-5V, the LM335AZ sensor outputs 10mV/K
 extern const float ADC_STEPS_TO_CV;
 

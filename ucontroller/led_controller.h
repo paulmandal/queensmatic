@@ -6,6 +6,9 @@
 
 #include "Arduino.h"
 
+// uController clock speed
+extern const long DEVICE_CLOCK_SPEED;
+
 // Default # of LEDs this controller is driving
 extern const int DEFAULT_LED_COUNT;
 

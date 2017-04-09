@@ -6,7 +6,8 @@
 #include <SPI.h>
 
 // Constants
-const int DEFAULT_LED_COUNT = 180;
+const long DEVICE_CLOCK_SPEED = 16000000L;
+const int DEFAULT_LED_COUNT = 4; // TODO: replace with value to match hardware
 const int LED_UPDATE_VALUE_COUNT = 5;
 
 // Constructor, empty
@@ -80,7 +81,7 @@ void LedController::_updateLeds() {
   int i;
   byte headerByte;
   LED *led;
-  SPI.beginTransaction(SPISettings(16000000, MSBFIRST, SPI_MODE0));
+  SPI.beginTransaction(SPISettings(DEVICE_CLOCK_SPEED, MSBFIRST, SPI_MODE0));
   // Start by sending 32 zero bits
   for(i = 0 ; i < 4 ; i++) {
     SPI.transfer(0x00);
