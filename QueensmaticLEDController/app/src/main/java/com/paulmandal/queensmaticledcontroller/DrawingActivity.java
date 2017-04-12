@@ -379,9 +379,15 @@ public class DrawingActivity extends AppCompatActivity {
     private void buildLedRects() {
         mLedRects = new Rect[mLedCount];
         View v;
+        int[] coords = new int[2];
         for (int i = 0; i < mLedCount; i++) {
             v = mLedViews[i];
-            mLedRects[i] = new Rect(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
+            v.getLocationOnScreen(coords);
+            int left = coords[0];
+            int top = coords[1];
+            int right = left + v.getWidth();
+            int bottom = top + v.getHeight();
+            mLedRects[i] = new Rect(left, top, right, bottom);
         }
     }
 
