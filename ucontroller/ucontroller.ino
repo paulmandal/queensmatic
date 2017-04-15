@@ -34,6 +34,5 @@ void loop() {
   messageHandler.checkMessages();
   hardwareController.updateTemp();
   hardwareController.checkTemp();
-  delay(100); // TODO: adjust delay time for smooth updates / add some delay logic?
 }
 
