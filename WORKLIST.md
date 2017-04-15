@@ -14,6 +14,7 @@
 - Source screws, dampening grommets, air filters
 
 # In Progress
+- LED Controller API - Docker container
 
 # Blocked
 - Waiting for components
@@ -48,6 +49,7 @@
 - Android App - Hook up power button/switch
 - Some refactors
 - Hardware - Order circuit board & SMD parts
+- Hardware - Lots of soldering, testing
 
 # Icebox
 
