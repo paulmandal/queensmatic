@@ -9,3 +9,5 @@
 - Integration Tests
 - Circuit with more SMD components instead of through-hole
 - Possibly relay to control LED strip power supply
+- Color selection pallet in app
+- Sleep mode in uController code - use SerialEvent()
