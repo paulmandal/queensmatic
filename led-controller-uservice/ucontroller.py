@@ -1,4 +1,4 @@
-#!flask/bin/python
+#!py3.5/bin/python
 
 #
 # Sends LED updates to the microcontroller
@@ -12,7 +12,7 @@ import re
 
 serial_port = serial.Serial(USB_SERIAL, 115200)
 lock = Lock()
-status_pattern = re.compile("P:(?P<power_state>[0-9]+),T:(?P<mosfet_temperature>[.0-9]+)")
+status_pattern = re.compile(b"P:(?P<power_state>[0-9]+),T:(?P<mosfet_temperature>[.0-9]+)")
 
 
 def set_config(config, startup=False):
