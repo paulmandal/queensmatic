@@ -14,7 +14,7 @@
 - Source screws, dampening grommets, air filters
 
 # In Progress
-- LED Controller API - Docker container
+- Something - Find bottleneck - LEDs aren't updating fast enough, excluded app already, something is wrong in uController or API code (or both)
 
 # Blocked
 - Waiting for components
@@ -50,6 +50,7 @@
 - Some refactors
 - Hardware - Order circuit board & SMD parts
 - Hardware - Lots of soldering, testing
+- LED Controller API - Docker container
 
 # Icebox
 
