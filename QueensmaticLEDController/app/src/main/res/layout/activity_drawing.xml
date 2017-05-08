@@ -9,14 +9,14 @@
     <LinearLayout
         android:id="@+id/led_layout_top"
         android:layout_width="match_parent"
-        android:layout_height="32dp"
+        android:layout_height="64dp"
         android:layout_alignParentTop="true"
         android:orientation="horizontal" />
 
 
     <LinearLayout
         android:id="@+id/led_layout_right"
-        android:layout_width="32dp"
+        android:layout_width="64dp"
         android:layout_height="match_parent"
         android:layout_above="@+id/led_layout_bottom"
         android:layout_alignParentRight="true"
@@ -26,14 +26,14 @@
     <LinearLayout
         android:id="@+id/led_layout_bottom"
         android:layout_width="match_parent"
-        android:layout_height="32dp"
+        android:layout_height="64dp"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal" />
 
 
     <LinearLayout
         android:id="@+id/led_layout_left"
-        android:layout_width="32dp"
+        android:layout_width="64dp"
         android:layout_height="match_parent"
         android:layout_above="@+id/led_layout_bottom"
         android:layout_alignParentLeft="true"
