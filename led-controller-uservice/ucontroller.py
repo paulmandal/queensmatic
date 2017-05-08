@@ -10,7 +10,6 @@ import serial
 import time
 import re
 
-serial_port = serial.Serial(USB_SERIAL, 115200)
 lock = Lock()
 status_pattern = re.compile(b"P:(?P<power_state>[0-9]+),T:(?P<mosfet_temperature>[.0-9]+)")
 
@@ -33,9 +32,7 @@ def update_led(led_number, red, green, blue, brightness):
 
 
 def get_status():
-    send('R')
-    time.sleep(0.01)
-    status_line = serial_port.readline()
+    status_line = send('R', True)
     matcher = status_pattern.match(status_line)
     return {
         'powerState': matcher.group('power_state') == '1',
@@ -49,8 +46,14 @@ def update_power(power_state):
     return
 
 
-def send(command):
+def send(command, response=False):
+    line = None
     with lock:
+        serial_port = serial.Serial(USB_SERIAL, 115200)
         serial_port.write(command.encode())
         serial_port.write(b'\n')
-    return
+        if response:
+            time.sleep(0.01)
+            line = serial_port.readline()
+        serial_port.close()
+    return line
