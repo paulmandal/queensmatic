@@ -7,7 +7,7 @@
 
 // Constants
 const long DEVICE_CLOCK_SPEED = 16000000L;
-const int DEFAULT_LED_COUNT = 174;
+const int DEFAULT_LED_COUNT = 193;
 const int LED_UPDATE_VALUE_COUNT = 5;
 
 // Constructor, empty
