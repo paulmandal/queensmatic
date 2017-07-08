@@ -2,7 +2,6 @@
 - Update SwaggerHub definition with response object
 
 ## Hardware
-- Hardware - Build NAS - wait for replacements
 - OS Setup
 - Design Case
   - Airflow
@@ -14,12 +13,13 @@
 - Source screws, dampening grommets, air filters
 
 # In Progress
-- Something - Find bottleneck - LEDs aren't updating fast enough, excluded app already, something is wrong in uController or API code (or both)
+- Hardware - Build NAS - wait for replacements
 
 # Blocked
-- Waiting for components
 
 # Finished
+- Waiting for components
+- Something - Find bottleneck - LEDs aren't updating fast enough, excluded app already, something is wrong in uController or API code (or both)
 - Hardware - Select & order hardware
 - LED Controller API - Define API in SwaggerHub
 - LED Controller API - /configuration endpoint, GET
