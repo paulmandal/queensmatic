@@ -39,7 +39,6 @@
         android:layout_above="@+id/led_layout_bottom"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/led_layout_top"
-        android:gravity="bottom"
         android:orientation="vertical" />
 
     <RelativeLayout

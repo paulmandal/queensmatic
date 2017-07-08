@@ -357,7 +357,11 @@ public class DrawingActivity extends AppCompatActivity {
             end = end + stripLengths[i];
             for (; j < end; j++) {
                 mLedViews[j].setLayoutParams(params);
-                mLedLayouts[i].addView(mLedViews[j]);
+                if(i == 3) {
+                    mLedLayouts[i].addView(mLedViews[j], 0);
+                } else {
+                    mLedLayouts[i].addView(mLedViews[j]);
+                }
             }
         }
 
