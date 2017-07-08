@@ -3,6 +3,13 @@
 
 ## Hardware
 - OS Setup
+
+# In Progress
+- Android App - Fix drawing of bottom LED strip (touch detection boxes are right-to-left instead of l-t-r)
+
+# Blocked
+
+# Finished
 - Design Case
   - Airflow
   - Air filtration
@@ -11,13 +18,7 @@
   - Wall mounting
   - Light-bleed blocking?
 - Source screws, dampening grommets, air filters
-
-# In Progress
 - Hardware - Build NAS - wait for replacements
-
-# Blocked
-
-# Finished
 - Waiting for components
 - Something - Find bottleneck - LEDs aren't updating fast enough, excluded app already, something is wrong in uController or API code (or both)
 - Hardware - Select & order hardware
