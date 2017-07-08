@@ -34,10 +34,10 @@ def maybe_init_database():
                       startupGreen INT,
                       startupBlue INT);
                     INSERT INTO %s VALUES (
-                        60,
-                        30,
-                        60,
-                        24,
+                        58,
+                        39,
+                        53,
+                        43,
                         31,
                         255,
                         255,
