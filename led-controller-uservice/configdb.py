@@ -35,9 +35,9 @@ def maybe_init_database():
                       startupBlue INT);
                     INSERT INTO %s VALUES (
                         58,
+                        38,
+                        58,
                         39,
-                        53,
-                        43,
                         31,
                         255,
                         255,
