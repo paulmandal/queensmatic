@@ -1,3 +1,2 @@
 flask==0.12.2
 pyserial==3.3
-docker-compose==1.14.0
