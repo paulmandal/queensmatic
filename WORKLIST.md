@@ -1,6 +1,3 @@
-# Icebox
-- Update SwaggerHub definition with response object
-
 # To Do
 
 ## Hardware
@@ -58,3 +55,4 @@
 # Icebox
 
 - LED Controller API - /leds endpoint - GET
+- Update SwaggerHub definition with response object
