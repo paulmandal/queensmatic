@@ -4,7 +4,7 @@ This project is a wall-mounted NAS with controllable LED strips attached to its 
 
 # Requirements
 
-- [Python 3.5](https://www.python.org/downloads/release/python-350/)
+- [Python](https://www.python.org/downloads/)
 - [Docker CE](https://www.docker.com/community-edition#/download)
 - [Android Studio + SDK](https://developer.android.com/studio/index.html)
 - [Arduino](https://www.arduino.cc/en/Main/Software)
@@ -24,9 +24,9 @@ This project is a wall-mounted NAS with controllable LED strips attached to its 
 
 ```
 cd led-controller-uservice
-virtualenv -p python3.5 venv
+virtualenv venv
 source venv/bin/activate
-pip install -r requirements.txt
+pip install docker-compose
 # Update docker-compose.yml with the serial port for your microcontroller board -- under "devices"
 docker-compose up
 ```
