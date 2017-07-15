@@ -1,4 +1,4 @@
-#!py3.5/bin/python
+#!venv/bin/python
 
 import serial
 import sys
