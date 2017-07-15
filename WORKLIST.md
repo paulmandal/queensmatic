@@ -1,15 +1,17 @@
-# To Do
+# Icebox
 - Update SwaggerHub definition with response object
 
+# To Do
+
 ## Hardware
-- OS Setup
 
 # In Progress
-- Android App - Fix drawing of bottom LED strip (touch detection boxes are right-to-left instead of l-t-r)
 
 # Blocked
 
 # Finished
+- OS Setup
+- Android App - Fix drawing of bottom LED strip (touch detection boxes are right-to-left instead of l-t-r)
 - Design Case
   - Airflow
   - Air filtration
