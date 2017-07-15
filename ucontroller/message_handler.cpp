@@ -100,7 +100,7 @@ void MessageHandler::_processLedUpdate(char *command) {
  */
 void MessageHandler::_processPowerUpdate(char *command) {
   int powerState = _extractInt(command);
-  boolean powerOn = powerState == 1 ? true : false;
+  boolean powerOn = powerState == 1;
   _hardwareController->updatePower(powerOn);
   if(powerOn) {
      _ledController->powerOn();
