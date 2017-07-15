@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Queensmatic LED Controller</string>
+
+    <!-- Config Activity -->
+    <string name="hostname">Hostname</string>
+    <string name="top_led_count">Top LED Count</string>
+    <string name="right_led_count">Right LED Count</string>
+    <string name="bottom_led_count">Bottom LED Count</string>
+    <string name="left_led_count">Left LED Count</string>
+    <string name="startup_brightness">Startup Brightness</string>
+    <string name="startup_red">Startup Red</string>
+    <string name="startup_green">Startup Green</string>
+    <string name="startup_blue">Startup Blue</string>
+    <string name="button_save">Save</string>
+    <string name="error_connecting_title">Error connecting to host: %1$s</string>
+    <string name="error_connecting_message">Re-enter the hostname and try again.</string>
+    <string name="error_saving_title">Error storing configuration.</string>
+    <string name="error_saving_message">Error storing connection, please retry.</string>
+
+    <!-- Drawing Activity -->
+    <string name="error_sending_led_update">Error sending LED update.</string>
+    <string name="error_fetching_configuration">Error fetching configuration from API.</string>
+    <string name="power_switch">Power</string>
+    <string name="button_setup">Setup</string>
+    <string name="degrees_celsius">%1$.2f°C</string>
+</resources>

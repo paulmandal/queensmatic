@@ -1,0 +1,13 @@
+## Possible Improvements
+- Design assumes a rectangular LED strip arrangement - something more flexible would be cool, but overkill for now
+- Define initial DB in .sql file instead of Python file
+- Bidirectional communication with the uController for LED state
+- Use Python classes for data received by the API
+- Move JSON->Native (and vice versa) mapping into API-level (led-controller-api.py)
+- Improve touch detection in Android app - determine which strip the user is touching then determine which LED using only that strip's views
+- Unit Tests
+- Integration Tests
+- Circuit with more SMD components instead of through-hole
+- Possibly relay to control LED strip power supply
+- Color selection pallet in app
+- Sleep mode in uController code - use SerialEvent()

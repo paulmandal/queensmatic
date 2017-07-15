@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/hostname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        style="@style/edit_text_default"
+        android:inputType="textUri"
+        android:hint="@string/hostname"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:id="@+id/top_led_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        style="@style/edit_text_default"
+        android:inputType="number"
+        android:hint="@string/top_led_count"
+        android:layout_below="@+id/hostname" />
+
+    <EditText
+        android:id="@+id/right_led_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        style="@style/edit_text_default"
+        android:inputType="number"
+        android:hint="@string/right_led_count"
+        android:layout_below="@+id/top_led_count" />
+
+    <EditText
+        android:id="@+id/bottom_led_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        style="@style/edit_text_default"
+        android:inputType="number"
+        android:hint="@string/bottom_led_count"
+        android:layout_below="@+id/right_led_count" />
+
+    <EditText
+        android:id="@+id/left_led_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        style="@style/edit_text_default"
+        android:inputType="number"
+        android:hint="@string/left_led_count"
+        android:layout_below="@+id/bottom_led_count" />
+
+    <EditText
+        android:id="@+id/startup_brightness"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        style="@style/edit_text_default"
+        android:inputType="number"
+        android:hint="@string/startup_brightness"
+        android:layout_below="@+id/left_led_count" />
+
+    <EditText
+        android:id="@+id/startup_red"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        style="@style/edit_text_default"
+        android:inputType="number"
+        android:hint="@string/startup_red"
+        android:layout_below="@+id/startup_brightness" />
+
+    <EditText
+        android:id="@+id/startup_green"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        style="@style/edit_text_default"
+        android:inputType="number"
+        android:hint="@string/startup_green"
+        android:layout_below="@+id/startup_red" />
+
+    <EditText
+        android:id="@+id/startup_blue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        style="@style/edit_text_default"
+        android:inputType="number"
+        android:hint="@string/startup_blue"
+        android:layout_below="@+id/startup_green" />
+
+    <Button
+        android:id="@+id/button_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:layout_alignEnd="@+id/startup_blue"
+        android:layout_alignParentBottom="true"
+        android:hint="@string/button_save" />
+
+</RelativeLayout>

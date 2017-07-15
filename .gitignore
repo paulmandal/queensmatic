@@ -1,0 +1,7 @@
+# Git Ignore
+.idea
+
+# Eagle project files
+*.epf
+*.s#*
+*.b#*
